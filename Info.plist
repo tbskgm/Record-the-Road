@@ -21,7 +21,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>位置情報を取得するために使います</string>
+	<string>位置情報を記録するために使用します。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>フォアグラウンドで実行されているときに、アプリがユーザーの位置情報へのアクセスを要求する理由を記載します。</string>
 	<key>UIApplicationSceneManifest</key>
