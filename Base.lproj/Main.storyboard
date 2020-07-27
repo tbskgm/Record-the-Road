@@ -32,7 +32,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xzH-dA-zTf">
-                                <rect key="frame" x="324" y="94" width="40" height="40"/>
+                                <rect key="frame" x="369" y="94" width="40" height="40"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="BOR-1z-MnI"/>
@@ -129,7 +129,7 @@
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="IwU-32-gic" secondAttribute="bottom" id="9Lf-Wi-k6L"/>
                             <constraint firstItem="S3E-0M-IAr" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="BaQ-A3-hDJ"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="V2r-Xf-vUt" secondAttribute="bottom" constant="30" id="C19-eu-x8h"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="xzH-dA-zTf" secondAttribute="trailing" constant="50" id="CV7-Qy-OkW"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="xzH-dA-zTf" secondAttribute="trailing" constant="5" id="CV7-Qy-OkW"/>
                             <constraint firstItem="S3E-0M-IAr" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="Vfy-Wy-ODk"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IwU-32-gic" secondAttribute="trailing" id="aLN-gI-B0e"/>
                             <constraint firstItem="xzH-dA-zTf" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="50" id="eSk-fx-if0"/>
