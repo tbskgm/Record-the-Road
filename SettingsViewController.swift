@@ -15,10 +15,20 @@ class SettingsViewController: UIViewController {
         super.viewDidLoad()
         
         let recordOnyourCalendar = RecordOnYourCalendar()
-        let _: Bool = recordOnyourCalendar.requestAuthorization() //カレンダーへのアクセス許可を取る
-        // Do any additional setup after loading the view.
+        
+        //カレンダーへのアクセス許可を取る
+        guard recordOnyourCalendar.requestAuthorization() == true else {
+            //アラートを表示
+            //ボタンを押せないようにする処理
+            //戻る処理(dismissの事)
+            return
+        }
+        
     }
+    
+    
     @IBAction func button(_ sender: Any) {
+        
         func recordCalendar() {
             let userDefaults: UserDefaults = UserDefaults.standard
             
@@ -55,15 +65,6 @@ class SettingsViewController: UIViewController {
         self.dismiss(animated: true, completion: nil) //戻る処理
     }
     
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destination.
-     // Pass the selected object to the new view controller.
-     }
-     */
     
 }
 
@@ -120,14 +121,15 @@ class RecordOnYourCalendar {
     
     //カレンダーに記録
     func recordEvent(title: String, viewController view: UIViewController, notes: String) {
+        /*
         let authenticationResult: Bool = requestAuthorization() //カレンダーへのアクセス許可を取る
         guard authenticationResult == true else { //カレンダーへのアクセスが許可されていないときの処理
             let alert: Alert = Alert()
             alert.showAlert(viewController: view, message: "カレンダーへのアクセスが許可されていません")
             return print("カレンダーへのアクセスが許可されていないので、記録できませんでした")
-        }
+        }*/
         // イベントの情報を準備
-        let startDate: Date = Date()
+        let startDate: Date = Date() //カレンダーの時間指定のために必須
         let endDate: Date = Date()
         let defaultCalendar = eventStore.defaultCalendarForNewEvents
         // イベントを作成して情報をセット
