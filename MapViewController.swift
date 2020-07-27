@@ -25,6 +25,10 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         
         locationManager.delegate = self //locationManagerを自身で操作できるようにする
         
+        getAuthorizationStatus() //位置情報へのアクセス状態の確認及びそれぞれの場合の処理の実行
+        
+        mapTypeView.isHidden = true //mapTypeViewを隠す
+        
         // 通知の許可を求める
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
@@ -34,9 +38,6 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         let notification = NotificationStruct()
         notification.notification(body: "おはよう", timeInterval: 10, title: "テスト") //テスト用
         
-        getAuthorizationStatus() //位置情報へのアクセス状態の確認及びそれぞれの場合の処理の実行
-        
-        mapTypeView.isHidden = true //mapTypeViewを隠す
         
         //segmentIndexを取り出す
         let userDefaults: UserDefaults = UserDefaults.standard
@@ -50,14 +51,17 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
             default:
                 fatalError("想定外の値の検出")
             }
-            
-            
         }
         
         //保存された記録を追加する
         if let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] {
-           for storedCollectedInfomation in storedCollectedInfomations {
+            for storedCollectedInfomation in storedCollectedInfomations {
                 recordTheRoad.append(storedCollectedInfomation)
+                /*if storedCollectedInfomation["comparison"] as? Bool != true {
+                    print("@c.timestampとdateの値が違います")
+                } else {
+                    print("@c.違いませんでした")
+                }*/
             }
             print(recordTheRoad.count)
             print(recordTheRoad)
@@ -66,9 +70,47 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         }
         
         
-        //print("viewDidLoad終了")
+        //ピンの追加
+        raisePins()
     }
     
+    
+    //位置情報を取得すると呼ばれる
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("@x.更新しました")
+        //取得したlocationの情報を代入する
+        guard let location = locations.last else {
+            print("returnされました")
+            return
+        }
+        let latlng = location.coordinate //緯度、経度の取得
+        let latitude = latlng.latitude //経度の取得
+        let longitude = latlng.longitude //緯度の取得
+        print("現在地: \n経度: \(String(describing: latitude))\n経度: \(String(describing: longitude))") //出力
+        //時間の取得
+        /*
+        /*timestampだと時間がずれるので、dateを使用*/
+        //let timestamp = location.timestamp
+        //print("@c.timestamp: \(timestamp)")
+        if date == timestamp {
+            comparison = true
+        } else {
+            comparison = false
+        }
+        let comparison: Bool!
+        */
+        let date: Date = Date()
+        
+        //保存処理
+        //let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "timestamp": timestamp, "comparison": comparison as Any]
+        let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "timestamp": date]
+        recordTheRoad.append(collectedInfomation)
+        print("array: \(recordTheRoad)")
+        let userDefaults: UserDefaults = UserDefaults.standard
+        userDefaults.set(recordTheRoad, forKey: "collectedInfomation")
+        userDefaults.synchronize()
+        
+    }
     
     //位置情報の取得に失敗すると呼ばれる
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
@@ -87,37 +129,47 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         }
     }
     
+    
+    //visitの呼び出し処理
+    /*
     //位置情報が取得されると呼ばれる
     func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
-        print("@x.更新を成功しました。")
-        locationManager処理()
+        let arrivalDate = visit.arrivalDate
+        let departureDate = visit.departureDate
+        let location = visit.coordinate
+        print("arrivalDate: \(arrivalDate)")
+        print("departureDate: \(departureDate)")
+        print("location: \(location)")
         
-    }
+        locationManager処理()
+    }*/
     
     
-    func locationManager処理() {
-        print("@x.location: \(String(describing: locationManager.location))")
-        print("@x.haeding: \(String(describing: locationManager.heading))")
-        //経度、緯度の取得
-        let location = locationManager.location
-        guard let latlng = location?.coordinate else {
-            print("returnされました")
-            return
-        }
-        let latitude = latlng.latitude
-        let longitude = latlng.longitude
-        print("現在地: \n経度: \(String(describing: latitude))\n経度: \(String(describing: longitude))")
-        //時間の取得
-        let timeRelationship = TimeRelationship()
-        let date: Date = timeRelationship.getNowTime
-        print(String(describing: date))
-        //保存処理
-        let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "date": date]
-        recordTheRoad.append(collectedInfomation)
-        print("array: \(recordTheRoad)")
+    
+    //ピンを立てる処理
+    func raisePins() {
         let userDefaults: UserDefaults = UserDefaults.standard
-        userDefaults.set(recordTheRoad, forKey: "collectedInfomation")
-        userDefaults.synchronize()
+        guard let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] else {
+            return print("collectedInfomationの値が存在しませんでした")
+        }
+        for storedCollectedInfomation in storedCollectedInfomations {
+            let latitude = storedCollectedInfomation["latitude"] as! CLLocationDegrees //経度の取得
+            let longitude = storedCollectedInfomation["longitude"] as! CLLocationDegrees //緯度の取得
+            let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) //経度、緯度の取得
+            let title: String!
+            //日時の取得
+            if let date = storedCollectedInfomation["timestamp"] as? Date {
+                let timeRelationship = TimeRelationship(date: date)
+                title = timeRelationship.stringDate //String型に変換
+            } else {
+                print("titleがありません")
+                title = ""
+            }
+            
+            let spot = Spot(title: title, coordinate: coordinate)
+            mapView.addAnnotation(spot)
+            mapView.selectAnnotation(spot, animated: true)
+        }
         
     }
     
@@ -160,12 +212,15 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     
     //位置情報取得できる時の共通処理
     func getLocation() {
-        locationManager.startMonitoringVisits() //位置情報を取得する
-        //locationManager.startUpdatingLocation()
+        //locationManager.startMonitoringVisits() //位置情報取得
         //locationManager.startMonitoringSignificantLocationChanges() //位置情報取得
+        locationManager.startUpdatingLocation() //位置情報取得
         mapView.userTrackingMode = MKUserTrackingMode.follow //地図はユーザーの位置を追従し、見出しが変わると回転します。
         locationManager.allowsBackgroundLocationUpdates = true //backgroundでの位置情報更新を可能にする
-        locationManager.startUpdatingHeading() //方角の取得
+        let backgroundLocationIndicator = locationManager.showsBackgroundLocationIndicator
+        locationManager.distanceFilter = 500
+        print("backgroundLocationIndicator: \(backgroundLocationIndicator)")
+        //locationManager.startUpdatingHeading() //方角の取得
         /*位置情報の取得を邪魔しなければtrueにする*/
         //locationManager.pausesLocationUpdatesAutomatically = true //システムが自動で位置情報の取得を一時停止する(消費電力削減のため)
         
@@ -227,7 +282,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     
     
     @IBAction func settingsButton(_ sender: Any) {
-        locationManager処理()
+        //locationManager処理()
     }
     
     
@@ -291,8 +346,24 @@ class Alert {
         view.present(alert, animated: true, completion: nil)
     }
 }
+
 class TimeRelationship {
     var dateFormatter: DateFormatter = DateFormatter()
+    
+    //String型のdateを用意する
+    let date: Date
+    init (date: Date) {
+        self.date = date
+    }
+    //String型のdateを用意する
+    var stringDate: String {
+        let date = self.date
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        dateFormatter.timeZone = TimeZone.current
+        return dateFormatter.string(from: date)
+    }
+    
+    /*
     //時差を加算
     var getNowTime: Date{
         let date : Date = Date()
@@ -306,7 +377,18 @@ class TimeRelationship {
         print("date.string: \(dateFormatter.string(from: date))")
         print("date.date: \(dateFormatter.date(from: q)!)")
         return dateFormatter.date(from: q)!
-        
-    }
+    }*/
+}
+
+
+//ピンの情報を格納する
+class Spot: NSObject, MKAnnotation {
+    let coordinate: CLLocationCoordinate2D
+    let title: String?
+    let subtitle: String? = ""
     
+    init(title: String, coordinate: CLLocationCoordinate2D) {
+        self.coordinate = coordinate
+        self.title = title
+    }
 }
