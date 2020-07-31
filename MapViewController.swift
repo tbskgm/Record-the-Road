@@ -69,9 +69,15 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
             print("else!!")
         }
         
+        //ユーザーが位置情報の利用を許可しているか
+        guard CLLocationManager.locationServicesEnabled() else {
+            //ユーザーに位置情報を利用できるように求める
+            return
+        }
+        
         
         //ピンの追加
-        raisePins()
+        //raisePins()
     }
     
     
@@ -87,6 +93,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         let latitude = latlng.latitude //経度の取得
         let longitude = latlng.longitude //緯度の取得
         print("現在地: \n経度: \(String(describing: latitude))\n経度: \(String(describing: longitude))") //出力
+        
         //時間の取得
         /*
         /*timestampだと時間がずれるので、dateを使用*/
@@ -109,6 +116,8 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         let userDefaults: UserDefaults = UserDefaults.standard
         userDefaults.set(recordTheRoad, forKey: "collectedInfomation")
         userDefaults.synchronize()
+        
+        //addPin() //ピンの追加
         
     }
     
@@ -145,7 +154,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     }*/
     
     
-    
+    /*
     //ピンを立てる処理
     func raisePins() {
         let userDefaults: UserDefaults = UserDefaults.standard
@@ -153,36 +162,52 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
             return print("collectedInfomationの値が存在しませんでした")
         }
         for storedCollectedInfomation in storedCollectedInfomations {
+            //経度、緯度の取得
             let latitude = storedCollectedInfomation["latitude"] as! CLLocationDegrees //経度の取得
             let longitude = storedCollectedInfomation["longitude"] as! CLLocationDegrees //緯度の取得
             let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) //経度、緯度の取得
-            let title: String!
             //日時の取得
+            let timestamp = storedCollectedInfomation["timestamp"] as! Date
+            let timeRelatoionship = TimeRelationship()
+            let title: String = timeRelatoionship.stringDate(date: timestamp)
+            /*
             if let date = storedCollectedInfomation["timestamp"] as? Date {
-                let timeRelationship = TimeRelationship(date: date)
-                title = timeRelationship.stringDate //String型に変換
+                let timeRelationship = TimeRelationship()
+                title = timeRelationship.stringDate(date: date) //String型に変換
             } else {
                 print("titleがありません")
                 title = ""
             }
-            
+            print("@x.title: \(title!)")
+            */
+            //ピンの追加
             let spot = Spot(title: title, coordinate: coordinate)
             mapView.addAnnotation(spot)
             mapView.selectAnnotation(spot, animated: true)
         }
-        
     }
-    
-    
-    //地図タイプを変更するUIViewを表示するボタン
-    @IBAction func changeMKMapTypeButton(_ sender: Any) {
-        
-        guard mapTypeView.isHidden == true else {
-            return mapTypeView.isHidden = true
+    //ピンの追加
+    func addPin() {
+        let userDefaults: UserDefaults = UserDefaults.standard
+        guard let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] else {
+            return print("collectedInfomationの値が存在しませんでした")
         }
-        return mapTypeView.isHidden = false
-    }
-    
+        guard let storedCollectedInfomation = storedCollectedInfomations.last else {
+            return print("collectedInfomations.lastの値が存在しませんでした")
+        }
+        //経度、緯度の取得
+        let latitude = storedCollectedInfomation["latitude"] as! CLLocationDegrees //経度の取得
+        let longitude = storedCollectedInfomation["longitude"] as! CLLocationDegrees //緯度の取得
+        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) //経度、緯度の取得
+        //日時の取得
+        let timestamp = storedCollectedInfomation["timestamp"] as! Date
+        let timeRelatoionship = TimeRelationship()
+        let title: String = timeRelatoionship.stringDate(date: timestamp)
+        //ピンの追加
+        let spot = Spot(title: title, coordinate: coordinate)
+        mapView.addAnnotation(spot)
+        mapView.selectAnnotation(spot, animated: true)
+    }*/
     
     
     //番号によって地図タイプを変更する
@@ -210,6 +235,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         }
     }
     
+    
     //位置情報取得できる時の共通処理
     func getLocation() {
         //locationManager.startMonitoringVisits() //位置情報取得
@@ -225,6 +251,7 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         //locationManager.pausesLocationUpdatesAutomatically = true //システムが自動で位置情報の取得を一時停止する(消費電力削減のため)
         
     }
+    
     
     //認証状況を確認して、位置情報へのアクセスを許可されてなかった場合は許可を得る
     func getAuthorizationStatus() {
@@ -262,29 +289,37 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     }
     
     
-    //現在の位置に移動するボタン
-    @IBAction func moveCurrentPositionButton(_ sender: Any) {
-        mapView.userTrackingMode = MKUserTrackingMode.follow //地図はユーザーの位置を追従します
-        
+    //地図タイプを変更するUIViewを表示するボタン
+    @IBAction func changeMKMapTypeButton(_ sender: Any) {
+        guard mapTypeView.isHidden == true else {
+            return mapTypeView.isHidden = true
+        }
+        return mapTypeView.isHidden = false
     }
     
     
+    //現在の位置に移動するボタン
+    @IBAction func moveCurrentPositionButton(_ sender: Any) {
+        mapView.userTrackingMode = MKUserTrackingMode.follow //地図はユーザーの位置を追従します
+    }
+    
+    
+    //mapTypeViewを隠すボタン
     @IBAction func backButton(_ sender: Any) {
         mapTypeView.isHidden = true
     }
     
     
-    @IBAction func button(_ sender: Any) {
-        print(recordTheRoad)
-        print(recordTheRoad.count)
+    //設定画面に遷移するボタン
+    @IBAction func settingsButton(_ sender: Any) {
+        //明示的な画面遷移処理
+        guard let settingsViewController = storyboard?.instantiateViewController(withIdentifier: "Settings") as? SettingsViewController else {
+            print("SettingsViewControllerが存在しません")
+            return
+        }
+        present(settingsViewController, animated: true, completion: nil)
         
     }
-    
-    
-    @IBAction func settingsButton(_ sender: Any) {
-        //locationManager処理()
-    }
-    
     
 }
 
@@ -348,8 +383,8 @@ class Alert {
 }
 
 class TimeRelationship {
-    var dateFormatter: DateFormatter = DateFormatter()
-    
+    private var dateFormatter: DateFormatter = DateFormatter()
+    /*
     //String型のdateを用意する
     let date: Date
     init (date: Date) {
@@ -358,6 +393,11 @@ class TimeRelationship {
     //String型のdateを用意する
     var stringDate: String {
         let date = self.date
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        dateFormatter.timeZone = TimeZone.current
+        return dateFormatter.string(from: date)
+    }*/
+    func stringDate(date: Date) -> String {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
         dateFormatter.timeZone = TimeZone.current
         return dateFormatter.string(from: date)
@@ -387,7 +427,7 @@ class Spot: NSObject, MKAnnotation {
     let title: String?
     let subtitle: String? = ""
     
-    init(title: String, coordinate: CLLocationCoordinate2D) {
+    fileprivate init(title: String, coordinate: CLLocationCoordinate2D) {
         self.coordinate = coordinate
         self.title = title
     }
