@@ -38,12 +38,12 @@ class SettingsViewController: UIViewController {
             guard let collectedInfomation = array.last else {
                 return
             }
-            let latitude = collectedInfomation["latitude"] as? Double
-            let longitude = collectedInfomation["longitude"] as? Double
-            let date = collectedInfomation["date"]
+            let latitude = collectedInfomation["latitude"] as! Double
+            let longitude = collectedInfomation["longitude"] as! Double
+            let timestamp = collectedInfomation["timestamp"] as! Date
             
             var notes: String {
-                "経度:\(longitude!)\n緯度: \(latitude!)\n時間: \(date!)"
+                "経度:\(longitude)\n緯度: \(latitude)\n時間: \(timestamp)"
             }
             
             //カレンダーに記録する
