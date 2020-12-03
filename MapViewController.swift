@@ -10,13 +10,14 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewDelegate {
+class MapViewController: UIViewController {
     
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var mapTypeView: UIView!
     @IBOutlet weak var mapTypeSegmentButton: UISegmentedControl!
     
     let locationManager: CLLocationManager = CLLocationManager()
+    var moniteringRegion: CLCircularRegion = CLCircularRegion()
     var recordTheRoad = [[String: Any]]() //位置情報を記録する
     
     
@@ -31,7 +32,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         
         // 通知の許可を求める
         let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound]) { (granted, error) in
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
+            if granted {
+                print("通知許可で出ました")
+            } else {
+                print("通知許可が出ませんでした")
+            }
         }
         
         //通知を飛ばす処理
@@ -63,11 +69,12 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
                     print("@c.違いませんでした")
                 }*/
             }
-            print(recordTheRoad.count)
-            print(recordTheRoad)
+            //print(recordTheRoad.count)
+            //print(recordTheRoad)
         } else {
-            print("else!!")
+            //print("else!!")
         }
+        
         
         //ユーザーが位置情報の利用を許可しているか
         guard CLLocationManager.locationServicesEnabled() else {
@@ -75,139 +82,59 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
             return
         }
         
-        
         //ピンの追加
-        //raisePins()
-    }
-    
-    
-    //位置情報を取得すると呼ばれる
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("@x.更新しました")
-        //取得したlocationの情報を代入する
-        guard let location = locations.last else {
-            print("returnされました")
-            return
-        }
-        let latlng = location.coordinate //緯度、経度の取得
-        let latitude = latlng.latitude //経度の取得
-        let longitude = latlng.longitude //緯度の取得
-        print("現在地: \n経度: \(String(describing: latitude))\n経度: \(String(describing: longitude))") //出力
-        
-        //時間の取得
-        /*
-        /*timestampだと時間がずれるので、dateを使用*/
-        //let timestamp = location.timestamp
-        //print("@c.timestamp: \(timestamp)")
-        if date == timestamp {
-            comparison = true
-        } else {
-            comparison = false
-        }
-        let comparison: Bool!
-        */
-        let date: Date = Date()
-        
-        //保存処理
-        //let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "timestamp": timestamp, "comparison": comparison as Any]
-        let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "timestamp": date]
-        recordTheRoad.append(collectedInfomation)
-        print("array: \(recordTheRoad)")
-        let userDefaults: UserDefaults = UserDefaults.standard
-        userDefaults.set(recordTheRoad, forKey: "collectedInfomation")
-        userDefaults.synchronize()
-        
-        //addPin() //ピンの追加
+        raisePins()
         
     }
     
-    //位置情報の取得に失敗すると呼ばれる
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("@x.更新を失敗しました。")
-        if let clError = error as? CLError {
-            switch clError {
-            case CLError.locationUnknown:
-                print("location unknown")
-            case CLError.denied:
-                print("denied")
-            default:
-                print("other Core Location error")
-            }
-        } else {
-            print("other error:", error.localizedDescription)
-        }
+    //
+    fileprivate func geofence(latitude: CLLocationDegrees, longitude: CLLocationDegrees, radius: CLLocationDistance, identifier: String) {
+        // 中心位置の設定(緯度・経度)
+        let moniteringCordinate = CLLocationCoordinate2DMake(latitude, longitude)
+        // モニタリング領域を作成
+        moniteringRegion = CLCircularRegion.init(center: moniteringCordinate, radius: radius, identifier: identifier)
+        
+        // モニタリング開始
+        self.locationManager.startMonitoring(for: self.moniteringRegion)
+
+        // モニタリング停止
+        //self.locationManager.stopMonitoring(for: self.moniteringRegion)
+
+        // 現在の状態(領域内or領域外)を取得
+        self.locationManager.requestState(for: self.moniteringRegion)
     }
     
     
-    //visitの呼び出し処理
-    /*
-    //位置情報が取得されると呼ばれる
-    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
-        let arrivalDate = visit.arrivalDate
-        let departureDate = visit.departureDate
-        let location = visit.coordinate
-        print("arrivalDate: \(arrivalDate)")
-        print("departureDate: \(departureDate)")
-        print("location: \(location)")
-        
-        locationManager処理()
-    }*/
-    
-    
-    /*
     //ピンを立てる処理
     func raisePins() {
-        let userDefaults: UserDefaults = UserDefaults.standard
-        guard let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] else {
-            return print("collectedInfomationの値が存在しませんでした")
+        let aboutLocation = AboutLocation()
+        guard aboutLocation.getLocationData() != nil else {
+            return
         }
-        for storedCollectedInfomation in storedCollectedInfomations {
-            //経度、緯度の取得
-            let latitude = storedCollectedInfomation["latitude"] as! CLLocationDegrees //経度の取得
-            let longitude = storedCollectedInfomation["longitude"] as! CLLocationDegrees //緯度の取得
+        let arrays = aboutLocation.getLocationData()!
+        print("class.stayTime: 終了")
+        for array in arrays {
+            //経度、緯度取得
+            let longitude = array["longitude"] as! CLLocationDegrees //緯度
+            let latitude = array["latitude"] as! CLLocationDegrees //経度
             let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) //経度、緯度の取得
-            //日時の取得
-            let timestamp = storedCollectedInfomation["timestamp"] as! Date
-            let timeRelatoionship = TimeRelationship()
-            let title: String = timeRelatoionship.stringDate(date: timestamp)
-            /*
-            if let date = storedCollectedInfomation["timestamp"] as? Date {
-                let timeRelationship = TimeRelationship()
-                title = timeRelationship.stringDate(date: date) //String型に変換
-            } else {
-                print("titleがありません")
-                title = ""
-            }
-            print("@x.title: \(title!)")
-            */
+            
+            //タイトル取得
+            let timestamp = array["timestamp"] as! Date
+            let timeRelationship = TimeRelationship()
+            let title = timeRelationship.dateToString(date: timestamp)
+            
+            //サブタイトル取得
+            let stayTime = array["stayTime"] as! Int
+            let subTitle = String(stayTime)
+            
             //ピンの追加
-            let spot = Spot(title: title, coordinate: coordinate)
+            let spot = Spot(coordinate: coordinate, title: title, subtitle: subTitle)
             mapView.addAnnotation(spot)
             mapView.selectAnnotation(spot, animated: true)
         }
+        
     }
-    //ピンの追加
-    func addPin() {
-        let userDefaults: UserDefaults = UserDefaults.standard
-        guard let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] else {
-            return print("collectedInfomationの値が存在しませんでした")
-        }
-        guard let storedCollectedInfomation = storedCollectedInfomations.last else {
-            return print("collectedInfomations.lastの値が存在しませんでした")
-        }
-        //経度、緯度の取得
-        let latitude = storedCollectedInfomation["latitude"] as! CLLocationDegrees //経度の取得
-        let longitude = storedCollectedInfomation["longitude"] as! CLLocationDegrees //緯度の取得
-        let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) //経度、緯度の取得
-        //日時の取得
-        let timestamp = storedCollectedInfomation["timestamp"] as! Date
-        let timeRelatoionship = TimeRelationship()
-        let title: String = timeRelatoionship.stringDate(date: timestamp)
-        //ピンの追加
-        let spot = Spot(title: title, coordinate: coordinate)
-        mapView.addAnnotation(spot)
-        mapView.selectAnnotation(spot, animated: true)
-    }*/
     
     
     //番号によって地図タイプを変更する
@@ -238,18 +165,17 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     
     //位置情報取得できる時の共通処理
     func getLocation() {
-        //locationManager.startMonitoringVisits() //位置情報取得
-        //locationManager.startMonitoringSignificantLocationChanges() //位置情報取得
-        locationManager.startUpdatingLocation() //位置情報取得
-        mapView.userTrackingMode = MKUserTrackingMode.follow //地図はユーザーの位置を追従し、見出しが変わると回転します。
+        /*滞在時間が存在しないログを無くすためにChangesをテストしている*/
+        //locationManager.startUpdatingLocation() //位置情報取得
+        locationManager.startMonitoringSignificantLocationChanges() //大幅な移動があった場合更新する
+        mapView.userTrackingMode = MKUserTrackingMode.follow //地図はユーザーの位置を追従する
         locationManager.allowsBackgroundLocationUpdates = true //backgroundでの位置情報更新を可能にする
-        let backgroundLocationIndicator = locationManager.showsBackgroundLocationIndicator
-        locationManager.distanceFilter = 500
+        let backgroundLocationIndicator = locationManager.showsBackgroundLocationIndicator //background時外観ステータスバーを変更するかどうか
+        locationManager.distanceFilter = 500 //更新イベントに必要な最低距離
+        /*何に使うのか謎*/
         print("backgroundLocationIndicator: \(backgroundLocationIndicator)")
         //locationManager.startUpdatingHeading() //方角の取得
-        /*位置情報の取得を邪魔しなければtrueにする*/
-        //locationManager.pausesLocationUpdatesAutomatically = true //システムが自動で位置情報の取得を一時停止する(消費電力削減のため)
-        
+        locationManager.pausesLocationUpdatesAutomatically = true //システムが自動で位置情報の取得を一時停止する(消費電力削減のため)
     }
     
     
@@ -260,12 +186,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
         switch status {
         case .notDetermined:
             print("notDetermined(未設定)")
-            locationManager.requestWhenInUseAuthorization() //位置情報へのアクセスをユーザーに求める
+            //locationManager.requestWhenInUseAuthorization() //位置情報へのアクセスをユーザーに求める
+            locationManager.requestAlwaysAuthorization()
             
         case .denied:
             print("denied(許可していない)")
             let alert: Alert = Alert()
-            alert.showAlert(viewController: self, message: "位置情報へのアクセスが許可されていません！") //許可されてないことを伝える
+            alert.goToSettings(viewController: self, message: "このサービスを利用するには、端末の位置情報をオンにしてください。")
             
         case .restricted:
             print("restricted(一度だけ許可)")
@@ -310,6 +237,13 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     }
     
     
+    //ピンを立てるボタン
+    @IBAction func raisePinButton(_ sender: Any) {
+        geofence(latitude: 35.595497, longitude: 135.337812, radius: 500, identifier: "test")
+    }
+    
+    
+    
     //設定画面に遷移するボタン
     @IBAction func settingsButton(_ sender: Any) {
         //明示的な画面遷移処理
@@ -322,113 +256,144 @@ class MapViewController: UIViewController, CLLocationManagerDelegate, MKMapViewD
     }
     
 }
-
-/*
-class RecordLocation: NSObject, NSSecureCoding {
-    static var supportsSecureCoding: Bool {
-        return true
-    }
-    
-    var locations: [CLLocation]? //
-    
-    override init() {}
-    
-    required init?(coder Decoder: NSCoder) {
-        locations = Decoder.decodeObject(forKey: "recordTheRoad") as? [CLLocation]
-    }
-    
-    func encode(with coder: NSCoder) {
-        coder.encode(locations, forKey: "recordTheRoad")
-    }
-    
-}*/
-
-
-protocol NotificationProtocol {
-    func notification(body: String, timeInterval: Double, title: String)
+extension MapViewController: MKMapViewDelegate {
 }
 
-
-//通知関係の構造体
-class NotificationStruct: NotificationProtocol {
-    func notification(body: String, timeInterval: Double, title: String){
-        let content = UNMutableNotificationContent()
-        //通知メッセージ
-        content.title = title
-        content.body = body
-        content.sound = UNNotificationSound.default
+extension MapViewController: CLLocationManagerDelegate{
+    // 位置情報の更新時に呼ばれる
+    //位置情報を取得すると呼ばれる
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        locationManager.startUpdatingLocation() //高精度位置情報取得を開始する
+        //print("@x.更新しました")
+        //取得したlocationの情報を代入する
+        guard let location = locations.last else {
+            print("returnされました")
+            return
+        }
         
-        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
-        //通知リクエストを作成して登録する
-        let request = UNNotificationRequest(identifier: title, content: content, trigger: trigger)
-        // Schedule the request with the system.
-        let notificationCenter = UNUserNotificationCenter.current()
-        notificationCenter.add(request) { (error) in
-            if error != nil {
-                print("error: \(error!)")
-                // Handle any errors.
+        //経度、緯度の取得
+        let latlng = location.coordinate //緯度、経度の取得
+        let latitude = latlng.latitude //経度の取得
+        let longitude = latlng.longitude //緯度の取得
+        print("経度: \(String(describing: latitude))経度: \(String(describing: longitude))") //出力
+        
+        //時間の取得
+        //let timestamp = location.timestamp /*timestampだと時間がずれるので、dateを使用*/
+        let date: Date = Date()
+        
+        //保存処理
+        let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "timestamp": date]
+        recordTheRoad.append(collectedInfomation)
+        print("array: \(recordTheRoad)")
+        let userDefaults: UserDefaults = UserDefaults.standard
+        userDefaults.set(recordTheRoad, forKey: "collectedInfomation")
+        userDefaults.synchronize()
+        
+        //大幅な動きがあった時に検出する
+        locationManager.stopUpdatingLocation() //高精度の位置情報取得を停止
+        locationManager.startMonitoringSignificantLocationChanges() //大幅な移動があった場合更新する
+    }
+    /*
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = locations.first!
+        print("緯度：\(location.coordinate.latitude)、経度：\(location.coordinate.longitude)")
+    }*/
+    
+    // ジオフェンスの情報が取得できないときに呼ばれる
+    //位置情報の取得に失敗すると呼ばれる
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("@x.更新を失敗しました。")
+        if let clError = error as? CLError {
+            switch clError {
+            case CLError.locationUnknown:
+                print("location unknown")
+            case CLError.denied:
+                print("denied")
+            default:
+                print("other Core Location error")
             }
+        } else {
+            print("other error:", error.localizedDescription)
         }
     }
-}
-
-class Alert {
-    //通常バージョン
-    func showAlert(viewController view: UIViewController, message: String) {
-        let alert = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-        let close = UIAlertAction(title: "閉じる", style: .cancel, handler: nil)
-        alert.addAction(close)
-        view.present(alert, animated: true, completion: nil)
-    }
-}
-
-class TimeRelationship {
-    private var dateFormatter: DateFormatter = DateFormatter()
     /*
-    //String型のdateを用意する
-    let date: Date
-    init (date: Date) {
-        self.date = date
-    }
-    //String型のdateを用意する
-    var stringDate: String {
-        let date = self.date
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-        dateFormatter.timeZone = TimeZone.current
-        return dateFormatter.string(from: date)
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("モニタリングエラー")
     }*/
-    func stringDate(date: Date) -> String {
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-        dateFormatter.timeZone = TimeZone.current
-        return dateFormatter.string(from: date)
+    
+    //一時停止された時に呼び出される
+    func locationManagerDidPauseLocationUpdates(_ manager: CLLocationManager) {
+        locationManager.stopUpdatingLocation() //高精度の位置情報取得を停止
+        locationManager.startMonitoringSignificantLocationChanges() //大幅な移動があった場合更新する
     }
     
+    //visitの呼び出し処理
     /*
-    //時差を加算
-    var getNowTime: Date{
-        let date : Date = Date()
-        print("date: \(date)")
-        //let dateFormatter: DateFormatter = DateFormatter()
-        //dateFormatter.locale = Locale(identifier: "ja_JP") //表示方法のカスタマイズ
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: Int(TimeZone.current.secondsFromGMT()))
-        //dateFormatter.timeZone = TimeZone.current
-        let q = dateFormatter.string(from: date)
-        print("date.string: \(dateFormatter.string(from: date))")
-        print("date.date: \(dateFormatter.date(from: q)!)")
-        return dateFormatter.date(from: q)!
+    //位置情報が取得されると呼ばれる
+    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
+        let arrivalDate = visit.arrivalDate
+        let departureDate = visit.departureDate
+        let location = visit.coordinate
+        print("arrivalDate: \(arrivalDate)")
+        print("departureDate: \(departureDate)")
+        print("location: \(location)")
+        
+        locationManager処理()
     }*/
-}
 
-
-//ピンの情報を格納する
-class Spot: NSObject, MKAnnotation {
-    let coordinate: CLLocationCoordinate2D
-    let title: String?
-    let subtitle: String? = ""
-    
-    fileprivate init(title: String, coordinate: CLLocationCoordinate2D) {
-        self.coordinate = coordinate
-        self.title = title
+    // 位置情報取得認可
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .notDetermined:
+            print("ユーザー認証未選択")
+            break
+        case .restricted:
+            print("位置情報サービス未許可")
+            break
+        case .denied:
+            print("位置情報取得を拒否、もしくは本体設定で拒否")
+            break
+        case .authorizedAlways:
+            print("アプリは常時、位置情報取得を許可")
+            break
+        case .authorizedWhenInUse:
+            print("アプリ起動時のみ、位置情報取得を許可")
+            break
+        @unknown default:
+            fatalError()
+        }
     }
+
+    // モニタリング開始成功時に呼ばれる
+    func locationManager(_ manager: CLLocationManager, didStartMonitoringFor region: CLRegion) {
+        print("モニタリング開始")
+    }
+
+    // モニタリングに失敗時に呼ばれる
+    func locationManager(_ manager: CLLocationManager, monitoringDidFailFor region: CLRegion?, withError error: Error) {
+        print("モニタリング失敗")
+    }
+
+    // ジオフェンス領域侵入時に呼ばれる
+    func locationManager(_ manager: CLLocationManager, didEnterRegion region: CLRegion) {
+        print("ジオフェンス侵入")
+    }
+
+    // ジオフェンス領域離脱時に呼ばれる
+    func locationManager(_ manager: CLLocationManager, didExitRegion region: CLRegion) {
+        print("ジオフェンス離脱")
+    }
+
+    // requestStateが呼ばれた時に呼ばれる
+    public func locationManager(_ manager: CLLocationManager, didDetermineState state: CLRegionState, for region: CLRegion) {
+        if state == .inside {
+            print("領域内です。")
+        } else {
+            print("領域外です。")
+        }
+    }
+    
 }
+
+
+
