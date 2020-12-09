@@ -9,6 +9,7 @@
 import UIKit
 import MapKit
 import CoreLocation
+import RealmSwift
 
 class MapViewController: UIViewController {
     
@@ -59,6 +60,7 @@ class MapViewController: UIViewController {
             }
         }
         
+        /*
         //保存された記録を追加する
         if let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] {
             for storedCollectedInfomation in storedCollectedInfomations {
@@ -73,7 +75,14 @@ class MapViewController: UIViewController {
             //print(recordTheRoad)
         } else {
             //print("else!!")
-        }
+        }*/
+        
+//保存された記録を追加する
+        let realm = try! Realm()
+        let storedData = realm.objects(LocationData.self)
+        print("storedData: \(storedData)")
+        //recordTheRoad.append(storedData)
+        
         
         
         //ユーザーが位置情報の利用を許可しているか
@@ -260,8 +269,7 @@ extension MapViewController: MKMapViewDelegate {
 }
 
 extension MapViewController: CLLocationManagerDelegate{
-    // 位置情報の更新時に呼ばれる
-    //位置情報を取得すると呼ばれる
+    //位置情報を取得
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         locationManager.startUpdatingLocation() //高精度位置情報取得を開始する
         //print("@x.更新しました")
@@ -276,18 +284,32 @@ extension MapViewController: CLLocationManagerDelegate{
         let latitude = latlng.latitude //経度の取得
         let longitude = latlng.longitude //緯度の取得
         print("経度: \(String(describing: latitude))経度: \(String(describing: longitude))") //出力
-        
         //時間の取得
-        //let timestamp = location.timestamp /*timestampだと時間がずれるので、dateを使用*/
-        let date: Date = Date()
+        let timestamp = location.timestamp
         
+        /*
         //保存処理
-        let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "timestamp": date]
+        let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "timestamp": timestamp]
         recordTheRoad.append(collectedInfomation)
         print("array: \(recordTheRoad)")
         let userDefaults: UserDefaults = UserDefaults.standard
         userDefaults.set(recordTheRoad, forKey: "collectedInfomation")
         userDefaults.synchronize()
+        */
+        
+        //値を代入
+        let locationData = LocationData()
+        locationData.longitude = longitude
+        locationData.latitude = latitude
+        locationData.timestamp = timestamp
+        
+        //保存
+        let realm = try! Realm()
+        try! realm.write {
+            realm.add(locationData)
+        }
+        let lastLocation = realm.objects(LocationData.self).last
+        print("realm: \(String(describing: lastLocation))")
         
         //大幅な動きがあった時に検出する
         locationManager.stopUpdatingLocation() //高精度の位置情報取得を停止
