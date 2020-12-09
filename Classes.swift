@@ -7,7 +7,7 @@
 //
 
 import MapKit
-
+import RealmSwift
 
 //通知関係の構造体
 class NotificationStruct: NotificationProtocol {
@@ -126,8 +126,13 @@ class A: NSObject, NSSecureCoding {
         coder.encode(timestamp, forKey: "timestamp")
         coder.encode(stayTime, forKey: "stayTime")
     }
-    
-    
+}
+
+
+class LocationData: Object {
+    @objc dynamic var longitude = 0.0
+    @objc dynamic var latitude = 0.0
+    @objc dynamic var timestamp = Date()
 }
 /*
  class TableViewList: NSObject, NSSecureCoding {
