@@ -107,6 +107,8 @@ class SettingsViewController: UIViewController {
         print("全ての滞在時間を算出しました")
         textView.text = texts
         */
+        
+        /*
         let aboutLocation = AboutLocation()
         guard aboutLocation.getLocationData() != nil else {
             return
@@ -124,7 +126,7 @@ class SettingsViewController: UIViewController {
             print("stayTime: \(stayTime)")
             texts += text
         }
-        textView.text = texts
+        textView.text = texts*/
     }
     
 }
