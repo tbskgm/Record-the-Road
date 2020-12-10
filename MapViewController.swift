@@ -19,16 +19,14 @@ class MapViewController: UIViewController {
     
     let locationManager: CLLocationManager = CLLocationManager()
     var moniteringRegion: CLCircularRegion = CLCircularRegion()
-    var recordTheRoad = [[String: Any]]() //位置情報を記録する
+    //var recordTheRoad = [[String: Any]]() //位置情報を記録する    /*支障がなければ削除*/
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         locationManager.delegate = self //locationManagerを自身で操作できるようにする
-        
         getAuthorizationStatus() //位置情報へのアクセス状態の確認及びそれぞれの場合の処理の実行
-        
         mapTypeView.isHidden = true //mapTypeViewを隠す
         
         // 通知の許可を求める
@@ -51,53 +49,33 @@ class MapViewController: UIViewController {
         if let storedSegmentIndex = userDefaults.object(forKey: "segmentIndex") as? Int {
             mapTypeSegmentButton.selectedSegmentIndex = storedSegmentIndex //segmentに前回設定された値を入れる
             switch storedSegmentIndex {
-            case 0:
-                mapView.mapType = .standard
-            case 1:
-                mapView.mapType = .hybrid
-            default:
-                fatalError("想定外の値の検出")
-            }
+            case 0: mapView.mapType = .standard
+            case 1: mapView.mapType = .hybrid
+            default: fatalError("想定外の値の検出") }
         }
         
-        /*
-        //保存された記録を追加する
-        if let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] {
-            for storedCollectedInfomation in storedCollectedInfomations {
-                recordTheRoad.append(storedCollectedInfomation)
-                /*if storedCollectedInfomation["comparison"] as? Bool != true {
-                    print("@c.timestampとdateの値が違います")
-                } else {
-                    print("@c.違いませんでした")
-                }*/
-            }
-            //print(recordTheRoad.count)
-            //print(recordTheRoad)
-        } else {
-            //print("else!!")
-        }*/
         
-//保存された記録を追加する
+        //保存された記録を追加する
         let realm = try! Realm()
         let storedData = realm.objects(LocationData.self)
         print("storedData: \(storedData)")
         //recordTheRoad.append(storedData)
         
         
-        
         //ユーザーが位置情報の利用を許可しているか
         guard CLLocationManager.locationServicesEnabled() else {
-            //ユーザーに位置情報を利用できるように求める
-            return
+            let alert = Alert()
+            return alert.showAlert(viewController: self, message: "位置情報がオン出ないと位置情報を記録することができません。") //ユーザーに位置情報を利用できるように求める
         }
         
         //ピンの追加
-        raisePins()
+        AboutLocation.getLocationData(mapView: mapView)
         
     }
     
-    //
-    fileprivate func geofence(latitude: CLLocationDegrees, longitude: CLLocationDegrees, radius: CLLocationDistance, identifier: String) {
+    
+    /*特定の場所に移動したら動くまで待機する*/
+    /*fileprivate func geofence(latitude: CLLocationDegrees, longitude: CLLocationDegrees, radius: CLLocationDistance, identifier: String) {
         // 中心位置の設定(緯度・経度)
         let moniteringCordinate = CLLocationCoordinate2DMake(latitude, longitude)
         // モニタリング領域を作成
@@ -111,39 +89,7 @@ class MapViewController: UIViewController {
 
         // 現在の状態(領域内or領域外)を取得
         self.locationManager.requestState(for: self.moniteringRegion)
-    }
-    
-    
-    //ピンを立てる処理
-    func raisePins() {
-        let aboutLocation = AboutLocation()
-        guard aboutLocation.getLocationData() != nil else {
-            return
-        }
-        let arrays = aboutLocation.getLocationData()!
-        print("class.stayTime: 終了")
-        for array in arrays {
-            //経度、緯度取得
-            let longitude = array["longitude"] as! CLLocationDegrees //緯度
-            let latitude = array["latitude"] as! CLLocationDegrees //経度
-            let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude) //経度、緯度の取得
-            
-            //タイトル取得
-            let timestamp = array["timestamp"] as! Date
-            let timeRelationship = TimeRelationship()
-            let title = timeRelationship.dateToString(date: timestamp)
-            
-            //サブタイトル取得
-            let stayTime = array["stayTime"] as! Int
-            let subTitle = String(stayTime)
-            
-            //ピンの追加
-            let spot = Spot(coordinate: coordinate, title: title, subtitle: subTitle)
-            mapView.addAnnotation(spot)
-            mapView.selectAnnotation(spot, animated: true)
-        }
-        
-    }
+    }*/
     
     
     //番号によって地図タイプを変更する
@@ -152,23 +98,22 @@ class MapViewController: UIViewController {
         switch sender.selectedSegmentIndex {
         case 0:
             mapView.mapType = MKMapType.standard //標準的な地図に変更 /*列挙型が書かれているところから書くのか！初知り*/
-            //mapTypeの保存
             let userDefatuls: UserDefaults = UserDefaults.standard
             let segmentIndex: Int = 0
-            userDefatuls.set(segmentIndex, forKey: "segmentIndex")
-            userDefatuls.synchronize()
+            userDefatuls.set(segmentIndex, forKey: "segmentIndex") //mapTypeの保存
+            //userDefatuls.synchronize()
             
         case 1:
             mapView.mapType = MKMapType.hybrid /*列挙型が書かれているところから書くのか！初知り*/
-            //mapTypeの保存
             let userDefatuls: UserDefaults = UserDefaults.standard
             let segmentIndex: Int = 1
-            userDefatuls.set(segmentIndex, forKey: "segmentIndex")
-            userDefatuls.synchronize()
+            userDefatuls.set(segmentIndex, forKey: "segmentIndex") //mapTypeの保存
+            //userDefatuls.synchronize()
             
         default:
             fatalError("segmentの数が増えているので修正してください")
         }
+        UserDefaults.standard.synchronize()
     }
     
     
@@ -181,8 +126,7 @@ class MapViewController: UIViewController {
         locationManager.allowsBackgroundLocationUpdates = true //backgroundでの位置情報更新を可能にする
         let backgroundLocationIndicator = locationManager.showsBackgroundLocationIndicator //background時外観ステータスバーを変更するかどうか
         locationManager.distanceFilter = 500 //更新イベントに必要な最低距離
-        /*何に使うのか謎*/
-        print("backgroundLocationIndicator: \(backgroundLocationIndicator)")
+        print("backgroundLocationIndicator: \(backgroundLocationIndicator)") /*何に使うのか謎*/
         //locationManager.startUpdatingHeading() //方角の取得
         locationManager.pausesLocationUpdatesAutomatically = true //システムが自動で位置情報の取得を一時停止する(消費電力削減のため)
     }
@@ -246,10 +190,11 @@ class MapViewController: UIViewController {
     }
     
     
+    /*
     //ピンを立てるボタン
     @IBAction func raisePinButton(_ sender: Any) {
-        geofence(latitude: 35.595497, longitude: 135.337812, radius: 500, identifier: "test")
-    }
+        //geofence(latitude: 35.595497, longitude: 135.337812, radius: 500, identifier: "test")
+    }*/
     
     
     
@@ -265,8 +210,13 @@ class MapViewController: UIViewController {
     }
     
 }
+
+
+
 extension MapViewController: MKMapViewDelegate {
 }
+
+
 
 extension MapViewController: CLLocationManagerDelegate{
     //位置情報を取得
@@ -274,10 +224,7 @@ extension MapViewController: CLLocationManagerDelegate{
         locationManager.startUpdatingLocation() //高精度位置情報取得を開始する
         //print("@x.更新しました")
         //取得したlocationの情報を代入する
-        guard let location = locations.last else {
-            print("returnされました")
-            return
-        }
+        guard let location = locations.last else { print("returnされました"); return }
         
         //経度、緯度の取得
         let latlng = location.coordinate //緯度、経度の取得
@@ -287,16 +234,6 @@ extension MapViewController: CLLocationManagerDelegate{
         //時間の取得
         let timestamp = location.timestamp
         
-        /*
-        //保存処理
-        let collectedInfomation: [String: Any] = ["latitude": latitude, "longitude": longitude, "timestamp": timestamp]
-        recordTheRoad.append(collectedInfomation)
-        print("array: \(recordTheRoad)")
-        let userDefaults: UserDefaults = UserDefaults.standard
-        userDefaults.set(recordTheRoad, forKey: "collectedInfomation")
-        userDefaults.synchronize()
-        */
-        
         //値を代入
         let locationData = LocationData()
         locationData.longitude = longitude
@@ -305,9 +242,7 @@ extension MapViewController: CLLocationManagerDelegate{
         
         //保存
         let realm = try! Realm()
-        try! realm.write {
-            realm.add(locationData)
-        }
+        try! realm.write { realm.add(locationData) }
         let lastLocation = realm.objects(LocationData.self).last
         print("realm: \(String(describing: lastLocation))")
         
@@ -315,16 +250,11 @@ extension MapViewController: CLLocationManagerDelegate{
         locationManager.stopUpdatingLocation() //高精度の位置情報取得を停止
         locationManager.startMonitoringSignificantLocationChanges() //大幅な移動があった場合更新する
     }
-    /*
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        let location = locations.first!
-        print("緯度：\(location.coordinate.latitude)、経度：\(location.coordinate.longitude)")
-    }*/
     
-    // ジオフェンスの情報が取得できないときに呼ばれる
+    
     //位置情報の取得に失敗すると呼ばれる
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("@x.更新を失敗しました。")
+        //print("位置情報の更新を失敗しました。")
         if let clError = error as? CLError {
             switch clError {
             case CLError.locationUnknown:
@@ -338,10 +268,6 @@ extension MapViewController: CLLocationManagerDelegate{
             print("other error:", error.localizedDescription)
         }
     }
-    /*
-    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("モニタリングエラー")
-    }*/
     
     //一時停止された時に呼び出される
     func locationManagerDidPauseLocationUpdates(_ manager: CLLocationManager) {
@@ -368,19 +294,19 @@ extension MapViewController: CLLocationManagerDelegate{
         switch status {
         case .notDetermined:
             print("ユーザー認証未選択")
-            break
+            //break
         case .restricted:
             print("位置情報サービス未許可")
-            break
+            //break
         case .denied:
             print("位置情報取得を拒否、もしくは本体設定で拒否")
-            break
+            //break
         case .authorizedAlways:
             print("アプリは常時、位置情報取得を許可")
-            break
+            //break
         case .authorizedWhenInUse:
             print("アプリ起動時のみ、位置情報取得を許可")
-            break
+            //break
         @unknown default:
             fatalError()
         }
