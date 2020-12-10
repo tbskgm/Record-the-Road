@@ -162,7 +162,7 @@ class LocationData: Object {
 
 
 class AboutLocation {
-    static func getLocationData(mapView: MKMapView) {
+    static func raisePins(mapView: MKMapView) {
 //値の取得
         /*let userDefaults: UserDefaults = UserDefaults.standard
         guard let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] else {
