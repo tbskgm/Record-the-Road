@@ -18,7 +18,7 @@ class SettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        inputTextView()
+        //inputTextView()
         //button.isEnabled = false
         
     }
