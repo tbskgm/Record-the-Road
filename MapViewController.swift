@@ -10,6 +10,7 @@ import UIKit
 import MapKit
 import CoreLocation
 import RealmSwift
+import Dispatch
 
 class MapViewController: UIViewController {
     
@@ -19,11 +20,37 @@ class MapViewController: UIViewController {
     
     let locationManager: CLLocationManager = CLLocationManager()
     var moniteringRegion: CLCircularRegion = CLCircularRegion()
-    //var recordTheRoad = [[String: Any]]() //位置情報を記録する    /*支障がなければ削除*/
-    
+    var migrationIsDone: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+//userDefaultsからRealmにデータを移行させる
+        //保存された記録を追加する
+        let queue = DispatchQueue.global(qos: DispatchQoS.QoSClass.background)
+        queue.async {
+            let userDefaults = UserDefaults.standard
+            guard self.migrationIsDone == false else {
+                return
+            }
+            
+            if let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] {
+                for storedCollectedInfomation in storedCollectedInfomations {
+                    
+                    let locationData = LocationData()
+                    locationData.latitude = storedCollectedInfomation["latitude"] as! Double
+                    locationData.longitude = storedCollectedInfomation["longitude"] as! Double
+                    locationData.timestamp = storedCollectedInfomation["timestamp"] as! Date
+                   
+                    let realm = try! Realm()
+                    try! realm.write { realm.add(locationData) }
+                    
+                }
+                self.migrationIsDone = true
+                userDefaults.setValue(self.migrationIsDone, forKey: "migrationIsDone")
+            }
+        }
+        
         
         locationManager.delegate = self //locationManagerを自身で操作できるようにする
         getAuthorizationStatus() //位置情報へのアクセス状態の確認及びそれぞれの場合の処理の実行
@@ -43,7 +70,6 @@ class MapViewController: UIViewController {
         let notification = NotificationStruct()
         notification.notification(body: "おはよう", timeInterval: 10, title: "テスト") //テスト用
         
-        
         //segmentIndexを取り出す
         let userDefaults: UserDefaults = UserDefaults.standard
         if let storedSegmentIndex = userDefaults.object(forKey: "segmentIndex") as? Int {
@@ -54,13 +80,10 @@ class MapViewController: UIViewController {
             default: fatalError("想定外の値の検出") }
         }
         
-        
         //保存された記録を追加する
         let realm = try! Realm()
         let storedData = realm.objects(LocationData.self)
         print("storedData: \(storedData)")
-        //recordTheRoad.append(storedData)
-        
         
         //ユーザーが位置情報の利用を許可しているか
         guard CLLocationManager.locationServicesEnabled() else {
@@ -69,7 +92,7 @@ class MapViewController: UIViewController {
         }
         
         //ピンの追加
-        AboutLocation.getLocationData(mapView: mapView)
+        AboutLocation.raisePins(mapView: mapView)
         
     }
     
@@ -211,14 +234,6 @@ class MapViewController: UIViewController {
     }
     
     
-    /*
-    //ピンを立てるボタン
-    @IBAction func raisePinButton(_ sender: Any) {
-        //geofence(latitude: 35.595497, longitude: 135.337812, radius: 500, identifier: "test")
-    }*/
-    
-    
-    
     //設定画面に遷移するボタン
     @IBAction func settingsButton(_ sender: Any) {
         //明示的な画面遷移処理
@@ -248,9 +263,9 @@ extension MapViewController: CLLocationManagerDelegate{
         guard let location = locations.last else { print("returnされました"); return }
         
         //経度、緯度の取得
-        let latlng = location.coordinate //緯度、経度の取得
-        let latitude = latlng.latitude //経度の取得
-        let longitude = latlng.longitude //緯度の取得
+        let coordinate = location.coordinate //緯度、経度の取得
+        let latitude = coordinate.latitude //経度の取得
+        let longitude = coordinate.longitude //緯度の取得
         print("経度: \(String(describing: latitude))経度: \(String(describing: longitude))") //出力
         //時間の取得
         let timestamp = location.timestamp
@@ -261,9 +276,11 @@ extension MapViewController: CLLocationManagerDelegate{
         locationData.latitude = latitude
         locationData.timestamp = timestamp
         
-        //保存
+        //Realmにデータを保存
         let realm = try! Realm()
         try! realm.write { realm.add(locationData) }
+        
+        //保存の確認
         let lastLocation = realm.objects(LocationData.self).last
         print("realm: \(String(describing: lastLocation))")
         
