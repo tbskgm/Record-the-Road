@@ -169,6 +169,27 @@ class MapViewController: UIViewController {
     }
     
     
+    /*
+    func migration() {
+        Realm.Configuration.defaultConfiguration = Realm.Configuration(
+            schemaVersion: 1,　// ①
+            migrationBlock: { migration, oldSchemaVersion in
+                if(oldSchemaVersion < 1) {
+                    migration.renameProperty(onType: Cat.className(), from: "name", to: "fullName") //②
+                }
+           }
+        })
+    }*/
+    func migration() {
+        Realm.Configuration.defaultConfiguration = Realm.Configuration(
+            schemaVersion: 1,
+            migrationBlock: { migration, oldSchemaVersion in
+                if(oldSchemaVersion < 1) {
+                }
+            }
+        )
+    }
+    
     //地図タイプを変更するUIViewを表示するボタン
     @IBAction func changeMKMapTypeButton(_ sender: Any) {
         guard mapTypeView.isHidden == true else {
