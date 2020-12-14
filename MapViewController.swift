@@ -22,6 +22,7 @@ class MapViewController: UIViewController {
     var moniteringRegion: CLCircularRegion = CLCircularRegion()
     var migrationIsDone: Bool = false
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -29,22 +30,21 @@ class MapViewController: UIViewController {
         //保存された記録を追加する
         let queue = DispatchQueue.global(qos: DispatchQoS.QoSClass.background)
         queue.async {
+            //実行するか確認
             let userDefaults = UserDefaults.standard
-            guard self.migrationIsDone == false else {
-                return
-            }
-            
+            self.migrationIsDone = userDefaults.bool(forKey: "migrationIsDone")
+            guard self.migrationIsDone == false else { return print("migrationがtrueでした") }
+            //データの移行
             if let storedCollectedInfomations = userDefaults.object(forKey: "collectedInfomation") as? [[String: Any]] {
                 for storedCollectedInfomation in storedCollectedInfomations {
-                    
+                    print("storedCollectedInfomationに入りました")
                     let locationData = LocationData()
                     locationData.latitude = storedCollectedInfomation["latitude"] as! Double
                     locationData.longitude = storedCollectedInfomation["longitude"] as! Double
                     locationData.timestamp = storedCollectedInfomation["timestamp"] as! Date
-                   
+                    
                     let realm = try! Realm()
                     try! realm.write { realm.add(locationData) }
-                    
                 }
                 self.migrationIsDone = true
                 userDefaults.setValue(self.migrationIsDone, forKey: "migrationIsDone")
@@ -68,7 +68,7 @@ class MapViewController: UIViewController {
         
         //通知を飛ばす処理
         let notification = NotificationStruct()
-        notification.notification(body: "おはよう", timeInterval: 10, title: "テスト") //テスト用
+        notification.notification(body: "おはよう", timeInterval: 1, title: "テスト") //テスト用
         
         //segmentIndexを取り出す
         let userDefaults: UserDefaults = UserDefaults.standard
@@ -80,10 +80,6 @@ class MapViewController: UIViewController {
             default: fatalError("想定外の値の検出") }
         }
         
-        //保存された記録を追加する
-        let realm = try! Realm()
-        let storedData = realm.objects(LocationData.self)
-        print("storedData: \(storedData)")
         
         //ユーザーが位置情報の利用を許可しているか
         guard CLLocationManager.locationServicesEnabled() else {
@@ -91,8 +87,15 @@ class MapViewController: UIViewController {
             return alert.showAlert(viewController: self, message: "位置情報がオン出ないと位置情報を記録することができません。") //ユーザーに位置情報を利用できるように求める
         }
         
-        //ピンの追加
-        AboutLocation.raisePins(mapView: mapView)
+        
+        let realm = try! Realm() //Realmの取得
+        guard realm.objects(LocationData.self).count > 2 else { return }
+        let startDay = specificedDate(value: -1) //開始日
+        let endDay = specificedDate(value: 0) //終了日
+        let locationData = realm.objects(LocationData.self).filter("date >= %@ AND date < %@", startDay, endDay) //当日分の情報を取得
+        print("locationData: \(locationData)")
+        print("locationDataCount: \(locationData.count)")
+        AboutLocation.raisePins(mapView: mapView) //ピンの追加
         
     }
     
@@ -114,29 +117,12 @@ class MapViewController: UIViewController {
         self.locationManager.requestState(for: self.moniteringRegion)
     }*/
     
-    
-    //番号によって地図タイプを変更する
-    @IBAction func mapTypeSegumentedButton(_ sender: UISegmentedControl) {
-        //print("mapTypeSegumentedButton開始")
-        switch sender.selectedSegmentIndex {
-        case 0:
-            mapView.mapType = MKMapType.standard //標準的な地図に変更 /*列挙型が書かれているところから書くのか！初知り*/
-            let userDefatuls: UserDefaults = UserDefaults.standard
-            let segmentIndex: Int = 0
-            userDefatuls.set(segmentIndex, forKey: "segmentIndex") //mapTypeの保存
-            //userDefatuls.synchronize()
-            
-        case 1:
-            mapView.mapType = MKMapType.hybrid /*列挙型が書かれているところから書くのか！初知り*/
-            let userDefatuls: UserDefaults = UserDefaults.standard
-            let segmentIndex: Int = 1
-            userDefatuls.set(segmentIndex, forKey: "segmentIndex") //mapTypeの保存
-            //userDefatuls.synchronize()
-            
-        default:
-            fatalError("segmentの数が増えているので修正してください")
-        }
-        UserDefaults.standard.synchronize()
+    //現在時刻から任意の時間カスタマイズしたdateを返す
+    func specificedDate(value: Int) -> Date {
+        let calendar = Calendar.current
+        defer { print("specifiedDate: \(String(describing: date))") }
+        let date = calendar.date(byAdding: .day, value: value, to: calendar.startOfDay(for: Date()))
+        return date!
     }
     
     
@@ -192,26 +178,30 @@ class MapViewController: UIViewController {
     }
     
     
-    /*
-    func migration() {
-        Realm.Configuration.defaultConfiguration = Realm.Configuration(
-            schemaVersion: 1,　// ①
-            migrationBlock: { migration, oldSchemaVersion in
-                if(oldSchemaVersion < 1) {
-                    migration.renameProperty(onType: Cat.className(), from: "name", to: "fullName") //②
-                }
-           }
-        })
-    }*/
-    func migration() {
-        Realm.Configuration.defaultConfiguration = Realm.Configuration(
-            schemaVersion: 1,
-            migrationBlock: { migration, oldSchemaVersion in
-                if(oldSchemaVersion < 1) {
-                }
-            }
-        )
+    //番号によって地図タイプを変更する
+    @IBAction func mapTypeSegumentedButton(_ sender: UISegmentedControl) {
+        //print("mapTypeSegumentedButton開始")
+        switch sender.selectedSegmentIndex {
+        case 0:
+            mapView.mapType = MKMapType.standard //標準的な地図に変更 /*列挙型が書かれているところから書くのか！初知り*/
+            let userDefatuls: UserDefaults = UserDefaults.standard
+            let segmentIndex: Int = 0
+            userDefatuls.set(segmentIndex, forKey: "segmentIndex") //mapTypeの保存
+            //userDefatuls.synchronize()
+            
+        case 1:
+            mapView.mapType = MKMapType.hybrid /*列挙型が書かれているところから書くのか！初知り*/
+            let userDefatuls: UserDefaults = UserDefaults.standard
+            let segmentIndex: Int = 1
+            userDefatuls.set(segmentIndex, forKey: "segmentIndex") //mapTypeの保存
+            //userDefatuls.synchronize()
+            
+        default:
+            fatalError("segmentの数が増えているので修正してください")
+        }
+        UserDefaults.standard.synchronize()
     }
+    
     
     //地図タイプを変更するUIViewを表示するボタン
     @IBAction func changeMKMapTypeButton(_ sender: Any) {
@@ -236,13 +226,14 @@ class MapViewController: UIViewController {
     
     //設定画面に遷移するボタン
     @IBAction func settingsButton(_ sender: Any) {
+        /*
         //明示的な画面遷移処理
         guard let settingsViewController = storyboard?.instantiateViewController(withIdentifier: "Settings") as? SettingsViewController else {
             print("SettingsViewControllerが存在しません")
             return
         }
         present(settingsViewController, animated: true, completion: nil)
-        
+        */
     }
     
 }
@@ -260,15 +251,14 @@ extension MapViewController: CLLocationManagerDelegate{
         locationManager.startUpdatingLocation() //高精度位置情報取得を開始する
         //print("@x.更新しました")
         //取得したlocationの情報を代入する
-        guard let location = locations.last else { print("returnされました"); return }
+        guard let location = locations.last else { return print("returnされました") }
         
-        //経度、緯度の取得
+        //経度、緯度、時間のの取得
         let coordinate = location.coordinate //緯度、経度の取得
         let latitude = coordinate.latitude //経度の取得
         let longitude = coordinate.longitude //緯度の取得
-        print("経度: \(String(describing: latitude))経度: \(String(describing: longitude))") //出力
-        //時間の取得
         let timestamp = location.timestamp
+        //print("経度: \(String(describing: latitude))経度: \(String(describing: longitude))") //出力
         
         //値を代入
         let locationData = LocationData()
