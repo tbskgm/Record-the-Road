@@ -23,7 +23,7 @@
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>位置情報を記録するために使用します。</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>フォアグラウンドで実行されているときに、アプリがユーザーの位置情報へのアクセスを要求する理由を記載します。</string>
+	<string>位置情報を記録するために使用します。</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
