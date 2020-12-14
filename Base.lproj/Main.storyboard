@@ -148,80 +148,14 @@
             </objects>
             <point key="canvasLocation" x="137.68115942028987" y="126.5625"/>
         </scene>
-        <!--Settings View Controller-->
-        <scene sceneID="YVc-3m-q3d">
-            <objects>
-                <viewController storyboardIdentifier="Settings" id="law-xJ-d02" customClass="SettingsViewController" customModule="Record_the_Road" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="f8T-bi-VeF">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="npF-7D-eGW">
-                                <rect key="frame" x="157" y="51" width="100" height="36"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="Alv-7K-m3V"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <state key="normal" title="削除"/>
-                                <connections>
-                                    <action selector="button:" destination="law-xJ-d02" eventType="touchUpInside" id="OYn-61-J5z"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="zGl-xT-bof">
-                                <rect key="frame" x="50" y="54" width="31" height="30"/>
-                                <state key="normal" title="戻る"/>
-                                <connections>
-                                    <action selector="backButton:" destination="law-xJ-d02" eventType="touchUpInside" id="aQJ-Hz-yGm"/>
-                                    <action selector="button:" destination="law-xJ-d02" eventType="touchUpInside" id="AeT-Iz-U0h"/>
-                                </connections>
-                            </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="textView" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="WNS-1V-orO">
-                                <rect key="frame" x="10" y="97" width="394" height="755"/>
-                                <color key="backgroundColor" systemColor="systemGray4Color"/>
-                                <color key="textColor" systemColor="labelColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
-                        </subviews>
-                        <viewLayoutGuide key="safeArea" id="fd9-aB-Q7L"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="fd9-aB-Q7L" firstAttribute="bottom" secondItem="WNS-1V-orO" secondAttribute="bottom" constant="10" id="0L8-4D-1c7"/>
-                            <constraint firstItem="zGl-xT-bof" firstAttribute="top" secondItem="fd9-aB-Q7L" secondAttribute="top" constant="10" id="NSt-O7-Wpu"/>
-                            <constraint firstItem="fd9-aB-Q7L" firstAttribute="trailing" secondItem="WNS-1V-orO" secondAttribute="trailing" constant="10" id="RoF-ks-252"/>
-                            <constraint firstItem="fd9-aB-Q7L" firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="zGl-xT-bof" secondAttribute="trailing" id="XZE-tU-prM"/>
-                            <constraint firstItem="npF-7D-eGW" firstAttribute="centerY" secondItem="zGl-xT-bof" secondAttribute="centerY" id="i7j-wj-d3r"/>
-                            <constraint firstItem="zGl-xT-bof" firstAttribute="leading" secondItem="fd9-aB-Q7L" secondAttribute="leading" constant="50" id="jQx-zy-oER"/>
-                            <constraint firstItem="WNS-1V-orO" firstAttribute="top" secondItem="npF-7D-eGW" secondAttribute="bottom" constant="10" id="kOe-zS-r2k"/>
-                            <constraint firstItem="npF-7D-eGW" firstAttribute="centerX" secondItem="f8T-bi-VeF" secondAttribute="centerX" id="kpY-J7-Lkv"/>
-                            <constraint firstItem="WNS-1V-orO" firstAttribute="leading" secondItem="fd9-aB-Q7L" secondAttribute="leading" constant="10" id="lhM-m6-H2d"/>
-                            <constraint firstItem="WNS-1V-orO" firstAttribute="centerX" secondItem="f8T-bi-VeF" secondAttribute="centerX" id="wKr-Og-a85"/>
-                        </constraints>
-                    </view>
-                    <navigationItem key="navigationItem" id="os7-o1-yOV"/>
-                    <connections>
-                        <outlet property="button" destination="npF-7D-eGW" id="ixP-q5-g0H"/>
-                        <outlet property="textView" destination="WNS-1V-orO" id="qcI-Zb-1Kn"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="PxP-AM-FDC" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="853" y="123"/>
-        </scene>
     </scenes>
     <resources>
         <image name="calendar" catalog="system" width="128" height="106"/>
         <image name="clear" catalog="system" width="128" height="114"/>
         <image name="location.fill" catalog="system" width="128" height="121"/>
         <image name="square.stack.3d.up.fill" catalog="system" width="128" height="124"/>
-        <systemColor name="labelColor">
-            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
-        <systemColor name="systemGray4Color">
-            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>
