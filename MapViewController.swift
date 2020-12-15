@@ -87,15 +87,50 @@ class MapViewController: UIViewController {
             return alert.showAlert(viewController: self, message: "位置情報がオン出ないと位置情報を記録することができません。") //ユーザーに位置情報を利用できるように求める
         }
         
-        
         let realm = try! Realm() //Realmの取得
-        guard realm.objects(LocationData.self).count > 2 else { return }
-        let startDay = specificedDate(value: -1) //開始日
+        guard realm.objects(LocationData.self).count > 2 else { return print("Realmに保存されているデータが不足していたのでreturnします")}
+        let startDay = specificedDate(value: -1) //開始
         let endDay = specificedDate(value: 0) //終了日
-        let locationData = realm.objects(LocationData.self).filter("date >= %@ AND date < %@", startDay, endDay) //当日分の情報を取得
-        print("locationData: \(locationData)")
-        print("locationDataCount: \(locationData.count)")
-        AboutLocation.raisePins(mapView: mapView) //ピンの追加
+        let locationDatas = realm.objects(LocationData.self).filter("timestamp >= %@ AND timestamp < %@", startDay, endDay) //当日分の情報を取得
+        //print("locationDatas: \(locationDatas)")
+        //print("locationDatasCount: \(locationDatas.count)")
+        AboutLocation.raisePins(mapView: mapView, locationDatas: locationDatas) //ピンの追加
+        
+        
+    }
+    
+    //暗号化処理
+    func encryptionProcess () {
+        func makeKey() {
+        //ランダムな暗号化キーを生成する
+        var key = Data(count: 64)
+        _ = key.withUnsafeMutableBytes { bytes in
+            SecRandomCopyBytes(kSecRandomDefault, 64, bytes)
+        }
+        //aをキーチェーンに保存
+        //保存処理
+        }
+        
+        /*
+        //暗号鍵の取得
+        func getKey() -> Data?{
+         //キーチェーンから取り出し
+        }
+        
+        //暗号化されたレルムファイルを開く
+        let config = Realm.Configuration(encryptionKey: getKey())
+        do {
+            let realm = try Realm(configuration: config)
+            //通常通りにレルムを使用する
+            let startDay = specificedDate(value: -1)
+            let endDay = specificedDate(value: 0)
+            let locationDatas = realm.objects(LocationData.self).filter("date >= %@ AND date < %@", startDay, endDay)
+            AboutLocation.raisePins(mapView: mapView, locationDatas: locationDatas) //ピンの追加
+        } catch let error as NSError {
+            //暗号化キーが間違っている場合、`error` は無効なデータベースであると言う。
+            fatalError("Error opening realm: \(error)")
+        }*/
+        
         
     }
     
@@ -250,8 +285,7 @@ extension MapViewController: CLLocationManagerDelegate{
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         locationManager.startUpdatingLocation() //高精度位置情報取得を開始する
         //print("@x.更新しました")
-        //取得したlocationの情報を代入する
-        guard let location = locations.last else { return print("returnされました") }
+        guard let location = locations.last else { return print("returnされました") } //取得したlocationの情報を取得する
         
         //経度、緯度、時間のの取得
         let coordinate = location.coordinate //緯度、経度の取得
