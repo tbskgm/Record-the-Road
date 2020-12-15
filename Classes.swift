@@ -78,7 +78,7 @@ class TimeRelationship {
     
     func difference(startDate: Date, endDate: Date) -> Int {
         //差分を出す
-        let stayTime = endDate.timeIntervalSince(startDate)
+        var stayTime: TimeInterval { endDate.timeIntervalSince(startDate) }
         var intStayTime: Int { Int(stayTime) }
         return intStayTime
     }
