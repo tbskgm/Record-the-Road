@@ -78,8 +78,8 @@ class TimeRelationship {
     
     func difference(startDate: Date, endDate: Date) -> Int {
         //差分を出す
-        let intervalStayTime = endDate.timeIntervalSince(startDate)
-        var intStayTime: Int { Int(intervalStayTime) }
+        let stayTime = endDate.timeIntervalSince(startDate)
+        var intStayTime: Int { Int(stayTime) }
         return intStayTime
     }
 }
@@ -107,54 +107,44 @@ class LocationData: Object {
 
 
 class AboutLocation {
-    static func raisePins(mapView: MKMapView) {
-        //値の取得
-        let realm = try! Realm()
-        let locationInfomations = realm.objects(LocationData.self) //filterで指定された日次のデータを取る
-        
-        
-        let locationInfomationsCount = locationInfomations.count
+    //ピンを立てる
+    static func raisePins(mapView: MKMapView, locationDatas: Results<LocationData>) {
+        print("locationDatas: \(locationDatas)")
+        let locationDatasCount = locationDatas.count
         var count = 0
         
-        for locationInfomation in locationInfomations {
+        for locationData in locationDatas {
             //経度、緯度の取得
-            let latitude = locationInfomation.latitude
-            let longitude = locationInfomation.longitude
-            
+            //let latitude = locationData.latitude
+            //let longitude = locationData.longitude
             //タイトルの取得
-            let timestamp = locationInfomation.timestamp
-            
+            //let timestamp = locationData.timestamp
 //サブタイトルの取得
-            //配列の数が足らない時
-            guard locationInfomationsCount > 2 else { return print("dayLocationの数が足りません") }
+            guard locationDatasCount > 2 else { return print("dayLocationの数が足りません") } //配列の数が足らない時
             //到着時間の取得
-            let arrival = locationInfomations[count]
+            let arrival = locationDatas[count]
             let arrivalTime = arrival.timestamp
-            
             //出発時間の取得
             count += 1
             let departureTime: Date!
-            if (locationInfomationsCount - 1) <= count {
+            if (locationDatasCount - 1) <= count {
                 departureTime = Date()
             } else {
-                let departure = locationInfomations[count]
+                let departure = locationDatas[count]
                 departureTime = departure.timestamp
             }
             
-            
             //滞在時間の取得
             var stayTime: Int { Int(departureTime.timeIntervalSince(arrivalTime)) } //出発時間から到着時間を引く
-            if stayTime < 600 { continue } //滞在時間が指定時間以下だった時は次の処理に移行する
-//ピンの追加
-            //情報の整理
-            var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: latitude, longitude: longitude) }//経度、緯度の取得
+            if stayTime < 300 { continue } //滞在時間が指定時間以下だった時は次の処理に移行する
+            //ピンの追加
+            var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: locationData.latitude, longitude: locationData.longitude) }//経度、緯度の取得
             let timeRelationship = TimeRelationship()
-            var title: String { timeRelationship.dateToString(date: timestamp) }
+            var title: String { timeRelationship.dateToString(date: locationData.timestamp) }
             var subtitle: String { String(stayTime) }
             let spot = Spot(coordinate: coordinate, title: title, subtitle: subtitle)
             mapView.addAnnotation(spot)
             mapView.selectAnnotation(spot, animated: true)
-            
         }
     }
     
