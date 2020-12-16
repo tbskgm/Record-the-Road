@@ -82,6 +82,12 @@ class TimeRelationship {
         var intStayTime: Int { Int(stayTime) }
         return intStayTime
     }
+    
+    //今日から指定日は何日前か知るための関数
+    func day() {
+        
+    }
+    
 }
 
 
