@@ -1,0 +1,652 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		4D47656B25B134B60020134A /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D47656A25B134B60020134A /* Entity.swift */; };
+		4D4A20A725D2B45D00E9FC22 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D4A20A625D2B45D00E9FC22 /* ViewModelTests.swift */; };
+		4D4A20AD25D6148F00E9FC22 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4D4A20AC25D6148F00E9FC22 /* GoogleService-Info.plist */; };
+		4D4CF0DC25AD4D7100256351 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D4CF0DB25AD4D7100256351 /* ViewModel.swift */; };
+		4D56051B24AA6A5800BB0393 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D56051A24AA6A5800BB0393 /* AppDelegate.swift */; };
+		4D56051D24AA6A5800BB0393 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D56051C24AA6A5800BB0393 /* SceneDelegate.swift */; };
+		4D56051F24AA6A5800BB0393 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D56051E24AA6A5800BB0393 /* MapViewController.swift */; };
+		4D56052224AA6A5800BB0393 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D56052024AA6A5800BB0393 /* Main.storyboard */; };
+		4D56052424AA6A5E00BB0393 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D56052324AA6A5E00BB0393 /* Assets.xcassets */; };
+		4D56052724AA6A5E00BB0393 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D56052524AA6A5E00BB0393 /* LaunchScreen.storyboard */; };
+		4D56057C24BBCFE800BB0393 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D56057B24BBCFE800BB0393 /* CoreLocation.framework */; };
+		4DAA72E724C13C1D0040C4C1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DAA72E624C13C1D0040C4C1 /* MapKit.framework */; };
+		4DAAEC4624ED15B10038302B /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAAEC4524ED15B10038302B /* Repository.swift */; };
+		4DE353A72586003C008DCD22 /* RepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE353A62586003C008DCD22 /* RepositoryTests.swift */; };
+		89B8B4B53C90AB2A2B485A2A /* Pods_Record_the_RoadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D3F31383E0EA050DB79E5B /* Pods_Record_the_RoadTests.framework */; };
+		8E85705D51F9A6078913D501 /* Pods_Record_the_Road.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D469A6D4D7B63C6149F54D85 /* Pods_Record_the_Road.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4DE353A92586003C008DCD22 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D56050F24AA6A5800BB0393 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4D56051624AA6A5800BB0393;
+			remoteInfo = "Record the Road";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1BF387C01AAF49947263B9F9 /* Pods-Record the Road.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the Road.release.xcconfig"; path = "Target Support Files/Pods-Record the Road/Pods-Record the Road.release.xcconfig"; sourceTree = "<group>"; };
+		295C47D88BB23E11F8559681 /* Pods-Record the Road-Record the RoadTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the Road-Record the RoadTests.debug.xcconfig"; path = "Target Support Files/Pods-Record the Road-Record the RoadTests/Pods-Record the Road-Record the RoadTests.debug.xcconfig"; sourceTree = "<group>"; };
+		31D3F31383E0EA050DB79E5B /* Pods_Record_the_RoadTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Record_the_RoadTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		448B337A507085861C1F756C /* Pods-Record the Road-Record the RoadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the Road-Record the RoadTests.release.xcconfig"; path = "Target Support Files/Pods-Record the Road-Record the RoadTests/Pods-Record the Road-Record the RoadTests.release.xcconfig"; sourceTree = "<group>"; };
+		4D47656A25B134B60020134A /* Entity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
+		4D4A20A625D2B45D00E9FC22 /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
+		4D4A20AC25D6148F00E9FC22 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
+		4D4CF0DB25AD4D7100256351 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
+		4D56051724AA6A5800BB0393 /* Record the Road.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Record the Road.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D56051A24AA6A5800BB0393 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		4D56051C24AA6A5800BB0393 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		4D56051E24AA6A5800BB0393 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		4D56052124AA6A5800BB0393 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		4D56052324AA6A5E00BB0393 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		4D56052624AA6A5E00BB0393 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		4D56052824AA6A5E00BB0393 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4D56057B24BBCFE800BB0393 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		4DAA72E624C13C1D0040C4C1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		4DAAEC4524ED15B10038302B /* Repository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
+		4DE353A42586003C008DCD22 /* Record the RoadTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Record the RoadTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DE353A62586003C008DCD22 /* RepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryTests.swift; sourceTree = "<group>"; };
+		4DE353A82586003C008DCD22 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		62724747DADCDFF15E18683F /* Pods-Record the RoadTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the RoadTests.debug.xcconfig"; path = "Target Support Files/Pods-Record the RoadTests/Pods-Record the RoadTests.debug.xcconfig"; sourceTree = "<group>"; };
+		708E45A6EAB7FAF85BD43632 /* Pods-Record the RoadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the RoadTests.release.xcconfig"; path = "Target Support Files/Pods-Record the RoadTests/Pods-Record the RoadTests.release.xcconfig"; sourceTree = "<group>"; };
+		D469A6D4D7B63C6149F54D85 /* Pods_Record_the_Road.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Record_the_Road.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD3C9C6EAC94AECE66635E16 /* Pods-Record the Road.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the Road.debug.xcconfig"; path = "Target Support Files/Pods-Record the Road/Pods-Record the Road.debug.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		4D56051424AA6A5800BB0393 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4DAA72E724C13C1D0040C4C1 /* MapKit.framework in Frameworks */,
+				4D56057C24BBCFE800BB0393 /* CoreLocation.framework in Frameworks */,
+				8E85705D51F9A6078913D501 /* Pods_Record_the_Road.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4DE353A12586003C008DCD22 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				89B8B4B53C90AB2A2B485A2A /* Pods_Record_the_RoadTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0DC77D4CD9A065F1C74E626A /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				DD3C9C6EAC94AECE66635E16 /* Pods-Record the Road.debug.xcconfig */,
+				1BF387C01AAF49947263B9F9 /* Pods-Record the Road.release.xcconfig */,
+				295C47D88BB23E11F8559681 /* Pods-Record the Road-Record the RoadTests.debug.xcconfig */,
+				448B337A507085861C1F756C /* Pods-Record the Road-Record the RoadTests.release.xcconfig */,
+				62724747DADCDFF15E18683F /* Pods-Record the RoadTests.debug.xcconfig */,
+				708E45A6EAB7FAF85BD43632 /* Pods-Record the RoadTests.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		4D56050E24AA6A5800BB0393 = {
+			isa = PBXGroup;
+			children = (
+				4D56051924AA6A5800BB0393 /* Record the Road */,
+				4DE353A52586003C008DCD22 /* Record the RoadTests */,
+				4D56051824AA6A5800BB0393 /* Products */,
+				4D56057A24BBCFE800BB0393 /* Frameworks */,
+				0DC77D4CD9A065F1C74E626A /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		4D56051824AA6A5800BB0393 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4D56051724AA6A5800BB0393 /* Record the Road.app */,
+				4DE353A42586003C008DCD22 /* Record the RoadTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4D56051924AA6A5800BB0393 /* Record the Road */ = {
+			isa = PBXGroup;
+			children = (
+				4D56051A24AA6A5800BB0393 /* AppDelegate.swift */,
+				4D56051C24AA6A5800BB0393 /* SceneDelegate.swift */,
+				4D47656A25B134B60020134A /* Entity.swift */,
+				4DAAEC4524ED15B10038302B /* Repository.swift */,
+				4D4CF0DB25AD4D7100256351 /* ViewModel.swift */,
+				4D56051E24AA6A5800BB0393 /* MapViewController.swift */,
+				4D56052024AA6A5800BB0393 /* Main.storyboard */,
+				4D56052324AA6A5E00BB0393 /* Assets.xcassets */,
+				4D56052524AA6A5E00BB0393 /* LaunchScreen.storyboard */,
+				4D4A20AC25D6148F00E9FC22 /* GoogleService-Info.plist */,
+				4D56052824AA6A5E00BB0393 /* Info.plist */,
+			);
+			path = "Record the Road";
+			sourceTree = "<group>";
+		};
+		4D56057A24BBCFE800BB0393 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4DAA72E624C13C1D0040C4C1 /* MapKit.framework */,
+				4D56057B24BBCFE800BB0393 /* CoreLocation.framework */,
+				D469A6D4D7B63C6149F54D85 /* Pods_Record_the_Road.framework */,
+				31D3F31383E0EA050DB79E5B /* Pods_Record_the_RoadTests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4DE353A52586003C008DCD22 /* Record the RoadTests */ = {
+			isa = PBXGroup;
+			children = (
+				4DE353A62586003C008DCD22 /* RepositoryTests.swift */,
+				4D4A20A625D2B45D00E9FC22 /* ViewModelTests.swift */,
+				4DE353A82586003C008DCD22 /* Info.plist */,
+			);
+			path = "Record the RoadTests";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		4D56051624AA6A5800BB0393 /* Record the Road */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4D56052B24AA6A5E00BB0393 /* Build configuration list for PBXNativeTarget "Record the Road" */;
+			buildPhases = (
+				AFEF3C05B73185AB91B157A8 /* [CP] Check Pods Manifest.lock */,
+				4D56051324AA6A5800BB0393 /* Sources */,
+				4D56051424AA6A5800BB0393 /* Frameworks */,
+				4D56051524AA6A5800BB0393 /* Resources */,
+				62C8F33CC4A6F4EFB4B6260B /* [CP] Embed Pods Frameworks */,
+				4DE353E52588AD88008DCD22 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Record the Road";
+			productName = "Record the Road";
+			productReference = 4D56051724AA6A5800BB0393 /* Record the Road.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4DE353A32586003C008DCD22 /* Record the RoadTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4DE353AD2586003D008DCD22 /* Build configuration list for PBXNativeTarget "Record the RoadTests" */;
+			buildPhases = (
+				85FC14976D125E411C65ABCA /* [CP] Check Pods Manifest.lock */,
+				4DE353A02586003C008DCD22 /* Sources */,
+				4DE353A12586003C008DCD22 /* Frameworks */,
+				4DE353A22586003C008DCD22 /* Resources */,
+				5A2FBD2EA384614716F4CEFE /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4DE353AA2586003C008DCD22 /* PBXTargetDependency */,
+			);
+			name = "Record the RoadTests";
+			productName = "Record the RoadTests";
+			productReference = 4DE353A42586003C008DCD22 /* Record the RoadTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		4D56050F24AA6A5800BB0393 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1220;
+				LastUpgradeCheck = 1220;
+				ORGANIZATIONNAME = "Tsubasa Kogoma";
+				TargetAttributes = {
+					4D56051624AA6A5800BB0393 = {
+						CreatedOnToolsVersion = 11.5;
+					};
+					4DE353A32586003C008DCD22 = {
+						CreatedOnToolsVersion = 12.2;
+						TestTargetID = 4D56051624AA6A5800BB0393;
+					};
+				};
+			};
+			buildConfigurationList = 4D56051224AA6A5800BB0393 /* Build configuration list for PBXProject "Record the Road" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 4D56050E24AA6A5800BB0393;
+			productRefGroup = 4D56051824AA6A5800BB0393 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				4D56051624AA6A5800BB0393 /* Record the Road */,
+				4DE353A32586003C008DCD22 /* Record the RoadTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		4D56051524AA6A5800BB0393 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D56052724AA6A5E00BB0393 /* LaunchScreen.storyboard in Resources */,
+				4D4A20AD25D6148F00E9FC22 /* GoogleService-Info.plist in Resources */,
+				4D56052424AA6A5E00BB0393 /* Assets.xcassets in Resources */,
+				4D56052224AA6A5800BB0393 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4DE353A22586003C008DCD22 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4DE353E52588AD88008DCD22 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\"${PODS_ROOT}/FirebaseCrashlytics/run\"\n";
+		};
+		5A2FBD2EA384614716F4CEFE /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Record the RoadTests/Pods-Record the RoadTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Record the RoadTests/Pods-Record the RoadTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Record the RoadTests/Pods-Record the RoadTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		62C8F33CC4A6F4EFB4B6260B /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Record the Road/Pods-Record the Road-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Record the Road/Pods-Record the Road-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Record the Road/Pods-Record the Road-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		85FC14976D125E411C65ABCA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Record the RoadTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AFEF3C05B73185AB91B157A8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Record the Road-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4D56051324AA6A5800BB0393 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D47656B25B134B60020134A /* Entity.swift in Sources */,
+				4D56051F24AA6A5800BB0393 /* MapViewController.swift in Sources */,
+				4D56051B24AA6A5800BB0393 /* AppDelegate.swift in Sources */,
+				4D56051D24AA6A5800BB0393 /* SceneDelegate.swift in Sources */,
+				4D4CF0DC25AD4D7100256351 /* ViewModel.swift in Sources */,
+				4DAAEC4624ED15B10038302B /* Repository.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4DE353A02586003C008DCD22 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4D4A20A725D2B45D00E9FC22 /* ViewModelTests.swift in Sources */,
+				4DE353A72586003C008DCD22 /* RepositoryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4DE353AA2586003C008DCD22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4D56051624AA6A5800BB0393 /* Record the Road */;
+			targetProxy = 4DE353A92586003C008DCD22 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		4D56052024AA6A5800BB0393 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4D56052124AA6A5800BB0393 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		4D56052524AA6A5E00BB0393 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				4D56052624AA6A5E00BB0393 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4D56052924AA6A5E00BB0393 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4D56052A24AA6A5E00BB0393 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		4D56052C24AA6A5E00BB0393 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DD3C9C6EAC94AECE66635E16 /* Pods-Record the Road.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.0.5;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 2XG799ZL5A;
+				INFOPLIST_FILE = "Record the Road/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.TK.RecordTheRoad;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		4D56052D24AA6A5E00BB0393 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1BF387C01AAF49947263B9F9 /* Pods-Record the Road.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1.0.5;
+				DEVELOPMENT_TEAM = 2XG799ZL5A;
+				INFOPLIST_FILE = "Record the Road/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.TK.RecordTheRoad;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		4DE353AB2586003C008DCD22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 62724747DADCDFF15E18683F /* Pods-Record the RoadTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2XG799ZL5A;
+				INFOPLIST_FILE = "Record the RoadTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Tsubasa.Record-the-RoadTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Record the Road.app/Record the Road";
+			};
+			name = Debug;
+		};
+		4DE353AC2586003C008DCD22 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 708E45A6EAB7FAF85BD43632 /* Pods-Record the RoadTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 2XG799ZL5A;
+				INFOPLIST_FILE = "Record the RoadTests/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "Tsubasa.Record-the-RoadTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Record the Road.app/Record the Road";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4D56051224AA6A5800BB0393 /* Build configuration list for PBXProject "Record the Road" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D56052924AA6A5E00BB0393 /* Debug */,
+				4D56052A24AA6A5E00BB0393 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4D56052B24AA6A5E00BB0393 /* Build configuration list for PBXNativeTarget "Record the Road" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4D56052C24AA6A5E00BB0393 /* Debug */,
+				4D56052D24AA6A5E00BB0393 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4DE353AD2586003D008DCD22 /* Build configuration list for PBXNativeTarget "Record the RoadTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4DE353AB2586003C008DCD22 /* Debug */,
+				4DE353AC2586003C008DCD22 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 4D56050F24AA6A5800BB0393 /* Project object */;
+}
