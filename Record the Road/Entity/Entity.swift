@@ -6,7 +6,7 @@
 //  Copyright © 2021 Tsubasa Kogoma. All rights reserved.
 //
 
-import Foundation
+
 import MapKit
 import RealmSwift
 

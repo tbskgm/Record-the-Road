@@ -14,6 +14,7 @@ import Dispatch
 import FSCalendar
 import CalculateCalendarLogic
 import KeychainAccess
+import RxSwift
 
 
 class MapViewController: UIViewController {
@@ -27,8 +28,7 @@ class MapViewController: UIViewController {
     
     let locationManager: CLLocationManager = CLLocationManager()
     var moniteringRegion: CLCircularRegion = CLCircularRegion()
-    //var migrationIsDone: Bool = false
-    
+    let disposeBag = DisposeBag()
     
     let locationViewModel: LocationViewModelProtocol = LocationViewModel()
     let realmViewModel: RealmViewModelProtocol = RealmViewModel()
@@ -40,59 +40,36 @@ class MapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         DispatchQueue.global(qos: .background).async {
             // 記録した位置情報からデータをfilterする
             let deleteTime = 120
             self.realmViewModel.organizeData(deleteTime: deleteTime).subscribe(
-                onSuccess: { result in
-                    print("成功")
-                    // 成功
+                onSuccess: { _ in
+                    
                 }, onError: { error in
-                    print("error: \(error)")
+                    // crashlyticsに連絡
                 })
                 .dispose()
         }
         
-        
-        //getAuthorizationStatus() //位置情報へのアクセス状態の確認及びそれぞれの場合の処理の実行
         mapTypeView.isHidden = true //mapTypeViewを隠す
         locationManager.delegate = self //locationManagerを自身で操作できるようにする
         self.calendarView.dataSource = self //カレンダーのdataSourceの紐付け
         self.calendarView.delegate = self //カレンダーのdelegateの紐付け
         
         
-        //位置情報へのアクセス状態の確認及びそれぞれの場合の処理の実行
+        // 位置情報へのアクセス状態の確認及びそれぞれの場合の処理の実行
         checkLocationStatus()
-        
-        //ユーザーが位置情報の利用を許可しているか
-        //guard CLLocationManager.locationServicesEnabled() else {
-        //    // ユーザーに位置情報を利用できるように求める
-        //    let alert = alertViewModel.showAlert(message: "位置情報がオン出ないと位置情報を記録することができません。")
-        //    self.present(alert, animated: true, completion: nil)
-        //    return
-        //}
-        
-        /*
-        // 通知の許可を求める(テスト用でいつ記録を行ったかわかるようにするため)
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { (granted, error) in
-            if granted {
-                print("通知許可で出ました")
-            } else {
-                print("通知許可が出ませんでした")
-            }
-        }*/
         
         // 通知へのアクセス状態を確認する
         notificationViewModel.askNotificationPermission()
         
         
-        //通知を飛ばす処理
+        // 通知を飛ばす処理
         let notificationViewModel: NotificationViewModelProtocol = NotificationViewModel()
         notificationViewModel.notification(body: "おはよう", timeInterval: 1, title: "テスト")
         
-        //segmentIndexを取り出す
+        // segmentIndexを取り出す
         let userDefaults: UserDefaults = UserDefaults.standard
         if let storedSegmentIndex = userDefaults.object(forKey: "segmentIndex") as? Int {
             mapTypeSegmentButton.selectedSegmentIndex = storedSegmentIndex //segmentに前回設定された値を入れる
@@ -106,15 +83,15 @@ class MapViewController: UIViewController {
         }
         
         // ピンを立てる処理
-        locationViewModel.getPinDatas(startValue: -1, deleteTime: 120).subscribe(onSuccess: {
-            result in
-            let spots = result
-            self.mapView.addAnnotations(spots)
-        }, onError: {
-            error in
-            print("error: \(error)")
-        })
-        
+        let deleteTime = 120
+        locationViewModel.getPinDatas(startDate: Date(), deleteTime: deleteTime).subscribe(
+            onSuccess: { spots in
+                self.mapView.addAnnotations(spots)
+            }, onError: { error in
+                let alert = self.alertViewModel.showAlert(message: "\(error.localizedDescription)")
+                self.present(alert, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
     
     
@@ -149,10 +126,6 @@ class MapViewController: UIViewController {
                 switch result {
                 case .notDetermined:
                     self.locationManager.requestAlwaysAuthorization() // 位置情報へのアクセスをユーザーに求める
-                    //let message = "位置情報が設定されていません"
-                    //alertViewModel.showAlert(message: message) { result in
-                    //    self.locationManager.requestAlwaysAuthorization() // 位置情報へのアクセスをユーザーに求める
-                    //}
                 case .denied:
                     let message = "このサービスを利用するには、端末の位置情報をオンにしてください。"
                     let alert = self.alertViewModel.goToSettings(message: message)
@@ -172,16 +145,18 @@ class MapViewController: UIViewController {
                     let message = "常に許可されています"
                     self.labelAlert(text: message)
                     self.getLocation()
+                @unknown default:
+                    assertionFailure()
                 }
             }, onError: { error in
                 fatalError("想定外の値の検出")
             })
+            .disposed(by: disposeBag)
     }
     
     
     //番号によって地図タイプを変更する
     @IBAction func mapTypeSegumentedButton(_ sender: UISegmentedControl) {
-        //print("mapTypeSegumentedButton開始")
         switch sender.selectedSegmentIndex {
         case 0:
             mapView.mapType = MKMapType.standard //標準的な地図に変更 /*列挙型が書かれているところから書くのか！初知り*/
@@ -248,7 +223,6 @@ extension MapViewController: CLLocationManagerDelegate{
         
         // 取得したlocationの情報を取得する
         guard let location = locations.last else {
-            print("returnされました")
             return
         }
         
@@ -259,7 +233,10 @@ extension MapViewController: CLLocationManagerDelegate{
         let timestamp = location.timestamp
         
         // Realmにデータを保存
-        realmViewModel.saveData(longitude: longitude, latitude: latitude, timestamp: timestamp)
+        realmViewModel.saveData(longitude: longitude, latitude: latitude, timestamp: timestamp).subscribe(
+            onSuccess: { _ in},
+            onError: { _ in})
+            .disposed(by: disposeBag)
         
         // 大幅な動きがあった時に検出する
         locationManager.stopUpdatingLocation() //高精度の位置情報取得を停止
@@ -269,15 +246,14 @@ extension MapViewController: CLLocationManagerDelegate{
     
     // 位置情報の取得に失敗すると呼ばれる
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        //print("位置情報の更新を失敗しました。")
         if let clError = error as? CLError {
             switch clError {
             case CLError.locationUnknown:
-                print("location unknown")
+                break
             case CLError.denied:
-                print("denied")
+                break
             default:
-                print("other Core Location error")
+                break
             }
         } else {
             print("other error:", error.localizedDescription)
@@ -290,42 +266,6 @@ extension MapViewController: CLLocationManagerDelegate{
         locationManager.startMonitoringSignificantLocationChanges() //大幅な移動があった場合更新する
     }
     
-    //visitの呼び出し処理
-    /*
-    //位置情報が取得されると呼ばれる
-    func locationManager(_ manager: CLLocationManager, didVisit visit: CLVisit) {
-        let arrivalDate = visit.arrivalDate
-        let departureDate = visit.departureDate
-        let location = visit.coordinate
-        print("arrivalDate: \(arrivalDate)")
-        print("departureDate: \(departureDate)")
-        print("location: \(location)")
-        
-        locationManager処理()
-    }*/
-
-    // 位置情報取得認可
-    /*func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
-        case .notDetermined:
-            print("ユーザー認証未選択")
-            //break
-        case .restricted:
-            print("位置情報サービス未許可")
-            //break
-        case .denied:
-            print("位置情報取得を拒否、もしくは本体設定で拒否")
-            //break
-        case .authorizedAlways:
-            print("アプリは常時位置情報取得を許可")
-            //break
-        case .authorizedWhenInUse:
-            print("アプリ起動時のみ位置情報取得を許可")
-            //break
-        @unknown default:
-            fatalError()
-        }
-    }*/
     
     /*特定の場所に移動したら動くまで待機する*/
     fileprivate func geofence(latitude: CLLocationDegrees, longitude: CLLocationDegrees, radius: CLLocationDistance, identifier: String) {
@@ -374,6 +314,8 @@ extension MapViewController: CLLocationManagerDelegate{
     }
     
 }
+
+
 extension MapViewController: FSCalendarDelegate, FSCalendarDataSource {
     // 土日や祝日の日の文字色を変える
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
@@ -397,43 +339,27 @@ extension MapViewController: FSCalendarDelegate, FSCalendarDataSource {
     //タップされた日付を取得する
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         // ピンの削除
-        locationViewModel.removePins().subscribe(onSuccess: {
-            spots in
-            self.mapView.removeAnnotations(spots)
-        }, onError: {
-            error in
-            fatalError("\(error.localizedDescription)")
-        })
-        
-        
-        /*addPinの指定日をdateを使用して書き直す*/
-        
+        locationViewModel.removePins().subscribe(
+            onSuccess: { spots in
+                self.mapView.removeAnnotations(spots)
+            }, onError: { error in
+                fatalError("\(error.localizedDescription)")
+            })
+            .disposed(by: disposeBag)
         
         // ピンを立てる処理
         let deleteTime = 120 // 除外される時間の指定
         let startDate = date
         locationViewModel.getPinDatas(startDate: startDate, deleteTime: deleteTime).subscribe(
             onSuccess: { spots in
-            self.mapView.addAnnotations(spots) // ピンを立てる処理
-            
-        }, onError: { error in
-            fatalError("error: \(error.localizedDescription)")
-        })
-        /*let startValue = -1 // 指定日
-        let deleteTime = 120 // 除外される時間の指定
-        locationViewModel.getPinDatas(startValue: startValue, deleteTime: deleteTime).subscribe(onSuccess: {
-            spots in
-            self.mapView.addAnnotations(spots) // ピンを立てる処理
-            
-        }, onError: {
-            error in
-            print("error: \(error)")
-        })*/
-        
+                self.mapView.addAnnotations(spots)
+            }, onError: { error in
+                fatalError("error: \(error.localizedDescription)")
+            })
+            .disposed(by: disposeBag)
     }
 }
+
+
 extension MapViewController: FSCalendarDelegateAppearance {
-    
 }
-
-

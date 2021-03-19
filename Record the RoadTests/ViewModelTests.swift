@@ -290,7 +290,6 @@ class TimeViewModelTests: XCTestCase {
         let correctTomorrow = dateFormatter.date(from: tomorrowString)!
         
         XCTAssertNotEqual(testToday, correctTomorrow)
-        
     }
     
     func testTimeConversionのテスト() {
@@ -332,7 +331,7 @@ class AlertViewModelTests: XCTestCase {
     }
 }
 
-class xNotificationViewModelTests: XCTestCase {
+class NotificationViewModelTests: XCTestCase {
     let notificationViewModel: NotificationViewModelProtocol = NotificationViewModel()
     
     func xtestAskNotificationPermissionのテスト() {
