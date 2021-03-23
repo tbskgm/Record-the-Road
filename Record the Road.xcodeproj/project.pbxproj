@@ -162,7 +162,6 @@
 				4D4A20BE25D61E0200E9FC22 /* Interactor */,
 				4D4A20BF25D61E0700E9FC22 /* Presenter */,
 				4D4A20BD25D61E0000E9FC22 /* View */,
-				4D664A2625D76C92006DC86C /* Router */,
 				4D56052324AA6A5E00BB0393 /* Assets.xcassets */,
 				4D56052524AA6A5E00BB0393 /* LaunchScreen.storyboard */,
 				4D4AADEA25DE2A6700D3232E /* GoogleService-Info.plist */,
@@ -180,13 +179,6 @@
 				31D3F31383E0EA050DB79E5B /* Pods_Record_the_RoadTests.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		4D664A2625D76C92006DC86C /* Router */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Router;
 			sourceTree = "<group>";
 		};
 		4DE353A52586003C008DCD22 /* Record the RoadTests */ = {

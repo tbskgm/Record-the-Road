@@ -15,10 +15,6 @@ import RealmSwift
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        //Realmのファイルの所在のデバッグする
-        //print("RealmFile: \(Realm.Configuration.defaultConfiguration.fileURL!)")
-
-        
         // Firebaseの追加
         FirebaseApp.configure()
         return true
