@@ -8,10 +8,9 @@
 
 
 import MapKit
-import RealmSwift
 
 
-// ピンの情報を格納する
+/// ピンの情報を格納する
 class Spot: NSObject, MKAnnotation {
     let coordinate: CLLocationCoordinate2D
     let title: String?
@@ -25,11 +24,5 @@ class Spot: NSObject, MKAnnotation {
 }
 
 
-// Realmの情報を格納する
-class LocationData: Object {
-    @objc dynamic var longitude = 0.0
-    @objc dynamic var latitude = 0.0
-    @objc dynamic var timestamp = Date()
-}
 
 

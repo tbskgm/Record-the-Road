@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4D47656B25B134B60020134A /* Entity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D47656A25B134B60020134A /* Entity.swift */; };
+		4D47656B25B134B60020134A /* Spot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D47656A25B134B60020134A /* Spot.swift */; };
 		4D4A20A725D2B45D00E9FC22 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D4A20A625D2B45D00E9FC22 /* ViewModelTests.swift */; };
 		4D4A20CD25D61EED00E9FC22 /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D4A20CC25D61EED00E9FC22 /* Repository.swift */; };
 		4D4AADEB25DE2A6700D3232E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4D4AADEA25DE2A6700D3232E /* GoogleService-Info.plist */; };
@@ -20,7 +20,8 @@
 		4D56052724AA6A5E00BB0393 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D56052524AA6A5E00BB0393 /* LaunchScreen.storyboard */; };
 		4D56057C24BBCFE800BB0393 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D56057B24BBCFE800BB0393 /* CoreLocation.framework */; };
 		4DAA72E724C13C1D0040C4C1 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4DAA72E624C13C1D0040C4C1 /* MapKit.framework */; };
-		4DE353A72586003C008DCD22 /* RepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE353A62586003C008DCD22 /* RepositoryTests.swift */; };
+		4DE353A72586003C008DCD22 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE353A62586003C008DCD22 /* ModelTests.swift */; };
+		4DF0D5082612046200D4504B /* LocationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF0D5072612046200D4504B /* LocationData.swift */; };
 		89B8B4B53C90AB2A2B485A2A /* Pods_Record_the_RoadTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 31D3F31383E0EA050DB79E5B /* Pods_Record_the_RoadTests.framework */; };
 		8E85705D51F9A6078913D501 /* Pods_Record_the_Road.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D469A6D4D7B63C6149F54D85 /* Pods_Record_the_Road.framework */; };
 /* End PBXBuildFile section */
@@ -40,7 +41,7 @@
 		295C47D88BB23E11F8559681 /* Pods-Record the Road-Record the RoadTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the Road-Record the RoadTests.debug.xcconfig"; path = "Target Support Files/Pods-Record the Road-Record the RoadTests/Pods-Record the Road-Record the RoadTests.debug.xcconfig"; sourceTree = "<group>"; };
 		31D3F31383E0EA050DB79E5B /* Pods_Record_the_RoadTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Record_the_RoadTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		448B337A507085861C1F756C /* Pods-Record the Road-Record the RoadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the Road-Record the RoadTests.release.xcconfig"; path = "Target Support Files/Pods-Record the Road-Record the RoadTests/Pods-Record the Road-Record the RoadTests.release.xcconfig"; sourceTree = "<group>"; };
-		4D47656A25B134B60020134A /* Entity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entity.swift; sourceTree = "<group>"; };
+		4D47656A25B134B60020134A /* Spot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spot.swift; sourceTree = "<group>"; };
 		4D4A20A625D2B45D00E9FC22 /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
 		4D4A20CC25D61EED00E9FC22 /* Repository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		4D4AADEA25DE2A6700D3232E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -56,8 +57,9 @@
 		4D56057B24BBCFE800BB0393 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		4DAA72E624C13C1D0040C4C1 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		4DE353A42586003C008DCD22 /* Record the RoadTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Record the RoadTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		4DE353A62586003C008DCD22 /* RepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryTests.swift; sourceTree = "<group>"; };
+		4DE353A62586003C008DCD22 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
 		4DE353A82586003C008DCD22 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4DF0D5072612046200D4504B /* LocationData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationData.swift; sourceTree = "<group>"; };
 		62724747DADCDFF15E18683F /* Pods-Record the RoadTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the RoadTests.debug.xcconfig"; path = "Target Support Files/Pods-Record the RoadTests/Pods-Record the RoadTests.debug.xcconfig"; sourceTree = "<group>"; };
 		708E45A6EAB7FAF85BD43632 /* Pods-Record the RoadTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Record the RoadTests.release.xcconfig"; path = "Target Support Files/Pods-Record the RoadTests/Pods-Record the RoadTests.release.xcconfig"; sourceTree = "<group>"; };
 		D469A6D4D7B63C6149F54D85 /* Pods_Record_the_Road.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Record_the_Road.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -99,14 +101,6 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		4D4A20B725D61D9000E9FC22 /* Entity */ = {
-			isa = PBXGroup;
-			children = (
-				4D47656A25B134B60020134A /* Entity.swift */,
-			);
-			path = Entity;
-			sourceTree = "<group>";
-		};
 		4D4A20BD25D61E0000E9FC22 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -116,21 +110,21 @@
 			path = View;
 			sourceTree = "<group>";
 		};
-		4D4A20BE25D61E0200E9FC22 /* Interactor */ = {
+		4D4A20BE25D61E0200E9FC22 /* Model */ = {
 			isa = PBXGroup;
 			children = (
 				4D4A20CC25D61EED00E9FC22 /* Repository.swift */,
 			);
-			name = Interactor;
-			path = View/Interactor;
+			name = Model;
+			path = View/Model;
 			sourceTree = "<group>";
 		};
-		4D4A20BF25D61E0700E9FC22 /* Presenter */ = {
+		4D4A20BF25D61E0700E9FC22 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				4D4CF0DB25AD4D7100256351 /* ViewModel.swift */,
 			);
-			path = Presenter;
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		4D56050E24AA6A5800BB0393 = {
@@ -158,10 +152,11 @@
 			children = (
 				4D56051A24AA6A5800BB0393 /* AppDelegate.swift */,
 				4D56051C24AA6A5800BB0393 /* SceneDelegate.swift */,
-				4D4A20B725D61D9000E9FC22 /* Entity */,
-				4D4A20BE25D61E0200E9FC22 /* Interactor */,
-				4D4A20BF25D61E0700E9FC22 /* Presenter */,
+				4D4A20BE25D61E0200E9FC22 /* Model */,
+				4D4A20BF25D61E0700E9FC22 /* ViewModel */,
 				4D4A20BD25D61E0000E9FC22 /* View */,
+				4DF0D5072612046200D4504B /* LocationData.swift */,
+				4D47656A25B134B60020134A /* Spot.swift */,
 				4D56052324AA6A5E00BB0393 /* Assets.xcassets */,
 				4D56052524AA6A5E00BB0393 /* LaunchScreen.storyboard */,
 				4D4AADEA25DE2A6700D3232E /* GoogleService-Info.plist */,
@@ -184,7 +179,7 @@
 		4DE353A52586003C008DCD22 /* Record the RoadTests */ = {
 			isa = PBXGroup;
 			children = (
-				4DE353A62586003C008DCD22 /* RepositoryTests.swift */,
+				4DE353A62586003C008DCD22 /* ModelTests.swift */,
 				4D4A20A625D2B45D00E9FC22 /* ViewModelTests.swift */,
 				4DE353A82586003C008DCD22 /* Info.plist */,
 			);
@@ -397,9 +392,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D4A20CD25D61EED00E9FC22 /* Repository.swift in Sources */,
-				4D47656B25B134B60020134A /* Entity.swift in Sources */,
+				4D47656B25B134B60020134A /* Spot.swift in Sources */,
 				4D56051F24AA6A5800BB0393 /* MapViewController.swift in Sources */,
 				4D56051B24AA6A5800BB0393 /* AppDelegate.swift in Sources */,
+				4DF0D5082612046200D4504B /* LocationData.swift in Sources */,
 				4D56051D24AA6A5800BB0393 /* SceneDelegate.swift in Sources */,
 				4D4CF0DC25AD4D7100256351 /* ViewModel.swift in Sources */,
 			);
@@ -410,7 +406,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D4A20A725D2B45D00E9FC22 /* ViewModelTests.swift in Sources */,
-				4DE353A72586003C008DCD22 /* RepositoryTests.swift in Sources */,
+				4DE353A72586003C008DCD22 /* ModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

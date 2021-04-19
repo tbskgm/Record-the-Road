@@ -30,14 +30,12 @@ class LocationViewModel: LocationViewModelProtocol {
     func getPinDatas(startValue: Int, deleteTime: Int) -> Single<[Spot]> {
         let realmViewModel: RealmViewModelProtocol = RealmViewModel()
         var locationDatas: [LocationData]!
-        realmViewModel.getOneDayData(startValue: startValue).subscribe(
-            onSuccess: { result in
-                locationDatas = result
-            }, onError: { error in
-                fatalError("想定外のエラーです")
-            })
-            .dispose()
-        
+        realmViewModel.getOneDayData(startValue: startValue).subscribe(onSuccess: { result in
+            locationDatas = result
+        }, onError: { error in
+            fatalError("想定外のエラーです")
+        })
+        .dispose()
         
         return self.locationRepository.getPinDatas(locationDatas: locationDatas).map { spots -> [Spot] in
             var spotArray = [Spot]()
@@ -64,13 +62,12 @@ class LocationViewModel: LocationViewModelProtocol {
         let realmViewModel: RealmViewModelProtocol = RealmViewModel()
         var locationDatas: [LocationData]!
         
-        realmViewModel.getOneDayData(startDate: startDate).subscribe(
-            onSuccess: { result in
-                locationDatas = result
-            }, onError: { error in
-                fatalError("想定外のエラーです")
-            })
-            .dispose()
+        realmViewModel.getOneDayData(startDate: startDate).subscribe(onSuccess: { result in
+            locationDatas = result
+        }, onError: { error in
+            fatalError("想定外のエラーです")
+        })
+        .dispose()
         
         return self.locationRepository.getPinDatas(locationDatas: locationDatas).map { spots -> [Spot] in
             var spotArray = [Spot]()
@@ -123,7 +120,7 @@ protocol RealmViewModelProtocol {
     
     func getOneDayData(startDate: Date) -> Single<[LocationData]>
     
-    func organizeData(deleteTime: Int) -> Single<Void>
+    func filter(deleteTime: Int) -> Single<Void>
     
     func deleteData(locationData: LocationData) -> Single<Void>
 }
@@ -158,38 +155,18 @@ class RealmViewModel: RealmViewModelProtocol {
     }
     
     
-    func organizeData(deleteTime: Int) -> Single<Void> {
+    func filter(deleteTime: Int) -> Single<Void> {
         var allLocationData: [LocationData]!
         
-        self.realmRepository.getAllData().subscribe(
-            onSuccess: { result in
-                allLocationData = result
-            }, onError: { error in
-                fatalError("想定外のエラーです")
-            })
-            .dispose()
+        self.realmRepository.getAllData().subscribe(onSuccess: { result in
+            allLocationData = result
+        }, onError: { error in
+            fatalError("想定外のエラーです")
+        })
+        .dispose()
         
         return self.realmRepository.organizeData(allLocationData: allLocationData, deleteTime: deleteTime)
     }
-    /*
-    func organizeData(deleteTime: Int) -> Single<Void> {
-        return Single<Void>.create { single -> Disposable in
-            self.realmRepository.getAllData().subscribe(
-                onSuccess: { result in
-                    let allLocationData = result
-                    self.realmRepository.organizeData(allLocationData: allLocationData, deleteTime: deleteTime).subscribe(
-                        onSuccess: {_ in },
-                        onError: {_ in })
-                        .dispose()
-                    
-                }, onError: { error in
-                    fatalError("想定外のエラーです")
-                })
-                .dispose()
-            return Disposables.create()
-        }
-    }*/
-    
     
     // データ削除
     func deleteData(locationData: LocationData) -> Single<Void> {

@@ -41,7 +41,7 @@ class MapViewController: UIViewController {
         DispatchQueue.global(qos: .background).async {
             // 記録した位置情報からデータをfilterする
             let deleteTime = 120
-            self.realmViewModel.organizeData(deleteTime: deleteTime).subscribe(
+            self.realmViewModel.filter(deleteTime: deleteTime).subscribe(
                 onSuccess: { _ in
                     
                 }, onError: { error in
