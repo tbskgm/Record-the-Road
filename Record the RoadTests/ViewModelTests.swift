@@ -7,50 +7,186 @@
 //
 
 import XCTest
+import RxSwift
+import MapKit
 
 @testable import Record_the_Road
 
-
+class MockLocationViewModel: LocationViewModelProtocol {
+    let locationRepository: LocationRepositoryProtocol = LocationRepository()
+    // 地図に立てられているピンを保存する
+    private var previousDatas = [Spot]()
+    
+    // テスト情報の作成
+    typealias spotData = (coordinate: CLLocationCoordinate2D, title:  Date, subtitle: Int)
+    
+    var fakeData: [spotData] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        
+        let coordinate = CLLocationCoordinate2D(latitude: 180, longitude: 180)
+        let string1 = "2020-12-20 12:53:32 +0900"
+        let title1: Date = dateFormatter.date(from: string1)!
+        let subtitle1 = 100
+        
+        let string2 = "2020-12-20 12:53:42 +0900"
+        let title2: Date = dateFormatter.date(from: string2)!
+        let subtitle2 = 100
+        
+        let data: [spotData] = [(coordinate, title1, subtitle1), (coordinate, title2, subtitle2)]
+        return data
+    }
+    
+    
+    func getPinDatas(startValue: Int, deleteTime: Int) -> Single<[Spot]> {
+        return Single<[Spot]>.create { single -> Disposable in
+            let spots = self.fakeData
+            var spotArray = [Spot]()
+            
+            for spot in spots {
+                let intSubtitle = spot.subtitle
+                guard intSubtitle > deleteTime else {
+                    continue
+                }
+                // 値の整形
+                let coordinate = spot.coordinate
+                let timeViewModel: TimeViewModelProtocol = TimeViewModel()
+                let title = timeViewModel.dateToString(date: spot.title)
+                let subtitle = timeViewModel.timeConversion(secondTime: intSubtitle)
+                // Spotの作成、追加
+                let returnSpot = Spot(coordinate: coordinate, title: title, subtitle: subtitle)
+                spotArray.append(returnSpot)
+            }
+            // 立てられつピンの情報を保存
+            self.previousDatas = spotArray
+            
+            single(.success(spotArray))
+            return Disposables.create()
+        }
+    }
+    
+    func getPinDatas(startDate: Date, deleteTime: Int) -> Single<[Spot]> {
+        return Single<[Spot]>.create { single -> Disposable in
+            let spots = self.fakeData
+            var spotArray = [Spot]()
+            
+            for spot in spots {
+                let intSubtitle = spot.subtitle
+                guard intSubtitle > deleteTime else {
+                    continue
+                }
+                // 値の整形
+                let coordinate = spot.coordinate
+                let timeViewModel: TimeViewModelProtocol = TimeViewModel()
+                let title = timeViewModel.dateToString(date: spot.title)
+                let subtitle = timeViewModel.timeConversion(secondTime: intSubtitle)
+                // Spotの作成、追加
+                let returnSpot = Spot(coordinate: coordinate, title: title, subtitle: subtitle)
+                spotArray.append(returnSpot)
+            }
+            // 立てられるピンの情報を保存
+            self.previousDatas = spotArray
+            single(.success(spotArray))
+            return Disposables.create()
+        }
+    }
+    
+    func removePins() -> Single<[Spot]> {
+        return self.locationRepository.removePins(previousDatas: previousDatas).map { spots -> [Spot] in
+            self.previousDatas = []
+            return spots
+        }
+    }
+    
+    func getAuthorizationStatus() -> Single<CLAuthorizationStatus> {
+        if #available(iOS 14.0, *) {
+            let  clLocationManager = CLLocationManager()
+            let status = clLocationManager.authorizationStatus
+            return locationRepository.getAuthorizationStatus(status: status)
+        } else {
+            let status = CLLocationManager.authorizationStatus()
+            return locationRepository.getAuthorizationStatus(status: status)
+        }
+    }
+    
+    
+}
 class LocationViewModelTests: XCTestCase {
-    let locationViewModel: LocationViewModelProtocol = LocationViewModel()
+    let mockLocationViewModel: LocationViewModelProtocol = MockLocationViewModel()
+    var fakeSpotData: [Spot] {
+        let coordinate = CLLocationCoordinate2D(latitude: 180, longitude: 180)
+        let subtitle = "0日 0時間 1分 40秒"
+        let title1 = "2020-12-20 12:53:32 +0900"
+        let spot1 = Spot(coordinate: coordinate, title: title1, subtitle: subtitle)
+        
+        let title2 = "2020-12-20 12:53:42 +0900"
+        let spot2 = Spot(coordinate: coordinate, title: title2, subtitle: subtitle)
+        
+        let data = [spot1, spot2]
+        return data
+    }
     
     func testGetPinDatasのテスト(){
-        // テスト情報の作成
-        var fakeLocationDatas: [LocationData] {
-            let date = Date()
-            
-            let locationData1 = LocationData()
-            locationData1.latitude = 35.676226
-            locationData1.longitude = 139.699385
-            locationData1.timestamp = date
-            
-            let locationData2 = LocationData()
-            locationData2.latitude = 35.5
-            locationData2.longitude = 139
-            locationData2.timestamp = date
-            
-            let datas = [locationData1, locationData2]
-            return datas
-        }
+        let expectation = self.expectation(description: "testGetPinDatasのテスト")
+        expectation.expectedFulfillmentCount = 2
+        // 引数に使用していない
+        var spot1: [Spot]!
+        mockLocationViewModel.getPinDatas(startValue: 0, deleteTime: 0).subscribe(onSuccess: { result in
+            spot1 = result
+            expectation.fulfill()
+        }, onError: { error in
+            XCTFail()
+        })
+        .dispose()
         
-        // 両方のデータを取り出しEqualで比較する, repositoryのgetOneDayDataのやり方を使用する
-        let deleteTime = 120
-        locationViewModel.getPinDatas(startValue: -1, deleteTime: deleteTime)
         
-        locationViewModel.getPinDatas(startDate: Date(timeIntervalSinceNow: -86400), deleteTime: deleteTime)
+        var spot2: [Spot]!
+        mockLocationViewModel.getPinDatas(startDate: Date(), deleteTime: 0).subscribe(onSuccess: { result in
+            spot2 = result
+            expectation.fulfill()
+        }, onError: { error in
+            XCTFail()
+        })
+        .dispose()
+        
+        
+        // spot1の比較
+        XCTAssertEqual(spot1[0].coordinate.latitude, fakeSpotData[0].coordinate.latitude)
+        XCTAssertEqual(spot1[0].coordinate.longitude, fakeSpotData[0].coordinate.longitude)
+        XCTAssertEqual(spot1[0].title, fakeSpotData[0].title)
+        XCTAssertEqual(spot1[0].subtitle, fakeSpotData[0].subtitle)
+        XCTAssertEqual(spot1[1].coordinate.latitude, fakeSpotData[1].coordinate.latitude)
+        XCTAssertEqual(spot1[1].coordinate.longitude, fakeSpotData[1].coordinate.longitude)
+        XCTAssertEqual(spot1[1].title, fakeSpotData[1].title)
+        XCTAssertEqual(spot1[1].subtitle, fakeSpotData[1].subtitle)
+        
+        // spot2の比較
+        XCTAssertEqual(spot2[0].coordinate.latitude, fakeSpotData[0].coordinate.latitude)
+        XCTAssertEqual(spot2[0].coordinate.longitude, fakeSpotData[0].coordinate.longitude)
+        XCTAssertEqual(spot2[0].title, fakeSpotData[0].title)
+        XCTAssertEqual(spot2[0].subtitle, fakeSpotData[0].subtitle)
+        XCTAssertEqual(spot2[1].coordinate.latitude, fakeSpotData[1].coordinate.latitude)
+        XCTAssertEqual(spot2[1].coordinate.longitude, fakeSpotData[1].coordinate.longitude)
+        XCTAssertEqual(spot2[1].title, fakeSpotData[1].title)
+        XCTAssertEqual(spot2[1].subtitle, fakeSpotData[1].subtitle)
+        
+        
+        wait(for: [expectation], timeout: 1)
     }
     
     func testRemovePinsのテスト() {
-        locationViewModel.removePins().subscribe(
-            onSuccess: { result in
-                // 成功
-                
-            }, onError: { error in
-                XCTFail()
-            })
+        let expectation = self.expectation(description: "testRemovePinsのテスト")
+        mockLocationViewModel.removePins().subscribe(onSuccess: { result in
+            expectation.fulfill()
+        }, onError: { error in
+            XCTFail()
+        })
+        .dispose()
+        
+        wait(for: [expectation], timeout: 1)
     }
     
-    func testGetAuthorizationStatusのテスト() {
+    func xtestGetAuthorizationStatusのテスト() {
         
     }
 }
@@ -59,7 +195,7 @@ class RealmViewModelTests: XCTestCase {
     let realmViewModel: RealmViewModelProtocol = RealmViewModel()
     
     //テストデータ
-    let testDatas = TestLocationData.testDatas
+    let testDatas = LocationDataTests.testDatas
     
     func testSaveDataのテスト() {
         for testData in testDatas {
@@ -73,43 +209,52 @@ class RealmViewModelTests: XCTestCase {
     func testGetOneDayDataのテスト() {
         // startValueで今日の日付を取得
         var startValue:[LocationData]!
-        realmViewModel.getOneDayData(startValue: 0).subscribe(
-            onSuccess: { result in
-                startValue = result
-            }, onError: { error in
-                XCTFail()
-            })
-            .dispose()
+        realmViewModel.getOneDayData(startValue: 0).subscribe(onSuccess: { result in
+            startValue = result
+        }, onError: { error in
+            XCTFail()
+        })
+        .dispose()
         
         // startDayで今日の日付を取得
         let timeViewModel: TimeViewModelProtocol = TimeViewModel()
         let date = timeViewModel.getStartOfDay(selectDay: Date())
         var startDate: [LocationData]!
-        realmViewModel.getOneDayData(startDate: date).subscribe(
-            onSuccess: { result in
-                startDate = result
-            }, onError: { error in
-                XCTFail()
-            })
-            .dispose()
+        realmViewModel.getOneDayData(startDate: date).subscribe(onSuccess: { result in
+            startDate = result
+        }, onError: { error in
+            XCTFail()
+        })
+        .dispose()
         
         // 同じデータが取れているかテスト
         XCTAssertEqual(startValue, startDate)
     }
     
-    func testDeleteDataのテスト() {
+    func testFilterのテスト() {
         let realmRepository: RealmRepositoryProtocol = RealmRepository()
+        let expectation = self.expectation(description: "testFilterのテスト")
+        expectation.assertForOverFulfill = false
+        
         realmRepository.getAllData().subscribe(onSuccess: { allData in
             for data in allData {
                 // テストデータ以外はcontinue
                 guard data.latitude == 150, data.longitude == 150 else {
+                    expectation.fulfill()
                     continue
                 }
-                self.realmViewModel.deleteData(locationData: data)
+                self.realmViewModel.deleteData(locationData: data).subscribe(onSuccess: { _ in
+                }, onError: { error in
+                    XCTFail()
+                })
             }
+            expectation.fulfill()
         }, onError: { error in
             XCTFail()
         })
+        .dispose()
+        
+        wait(for: [expectation], timeout: 1)
     }
 }
 
@@ -333,7 +478,7 @@ class AlertViewModelTests: XCTestCase {
 
 class NotificationViewModelTests: XCTestCase {
     let notificationViewModel: NotificationViewModelProtocol = NotificationViewModel()
-    
+
     func xtestAskNotificationPermissionのテスト() {
         
     }
@@ -341,7 +486,5 @@ class NotificationViewModelTests: XCTestCase {
     func xtestNotificationのテスト() {
         
     }
-    
-    
 }
 
