@@ -17,7 +17,6 @@ target 'Record the Road' do
   
   
   target 'Record the RoadTests' do
-    #上のpod('RealmSwift')が使える、テスト専用もここで追加させることができる
     inherit! :search_paths
     pod 'RxBlocking', '5.1.1'
     pod 'RxTest', '5.1.1'

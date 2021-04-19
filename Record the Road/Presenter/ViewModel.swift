@@ -21,65 +21,9 @@ protocol LocationViewModelProtocol {
     
     func getAuthorizationStatus() -> Single<CLAuthorizationStatus>
 }
-
-protocol RealmViewModelProtocol {
-    func saveData(longitude: Double, latitude: Double, timestamp: Date) -> Single<Void>
-    
-    func getOneDayData(startValue: Int) -> Single<[LocationData]>
-    
-    func getOneDayData(startDate: Date) -> Single<[LocationData]>
-    
-    func organizeData(deleteTime: Int) -> Single<Void>
-    
-    func deleteData(locationData: LocationData) -> Single<Void>
-}
-
-protocol CalendarViewModelProtocol {
-    func judgeHoliday(_ date : Date) -> Bool
-    
-    func getWeekId(_ date: Date) -> Int
-    
-    //typealias yearMonthDay = (year: Int,month: Int,day: Int)
-    //func getDay(_ date:Date) -> yearMonthDay
-}
-
-protocol AlertViewModelProtocol {
-    func showAlert(message: String) -> UIAlertController
-    
-    //func showAlert(message: String, closure: @escaping (_ string: String) -> Void) -> UIAlertController
-    
-    func goToSettings(message: String) -> UIAlertController
-}
-
-protocol NotificationViewModelProtocol {
-    func askNotificationPermission()
-    
-    func notification(body: String, timeInterval: Double, title: String)
-}
-
-protocol TimeViewModelProtocol {
-    func dateToString(date: Date) -> String
-    
-    func stringToDate(stringDate: String) -> Date
-    
-    func difference(startDate: Date, endDate: Date) -> Int
-    
-    func getStartOfDayCustomizedValue(value: Int) -> Date
-    
-    func getStartOfDay(selectDay: Date) -> Date
-    
-    func specificedDate(value: Int, selectDay: Date) -> Date
-    
-    func timeConversion(secondTime: Int) -> String
-    
-    func secondConversion(hour: Int, minute: Int, second: Int) -> Int
-}
-
-
-
 class LocationViewModel: LocationViewModelProtocol {
     let locationRepository: LocationRepositoryProtocol = LocationRepository()
-    //地図に立てられているピンを保存する
+    // 地図に立てられているピンを保存する
     private var previousDatas = [Spot]()
     
     // ピンを追加する
@@ -93,6 +37,7 @@ class LocationViewModel: LocationViewModelProtocol {
                 fatalError("想定外のエラーです")
             })
             .dispose()
+        
         
         return self.locationRepository.getPinDatas(locationDatas: locationDatas).map { spots -> [Spot] in
             var spotArray = [Spot]()
@@ -143,7 +88,7 @@ class LocationViewModel: LocationViewModelProtocol {
                 let returnSpot = Spot(coordinate: coordinate, title: title, subtitle: subtitle)
                 spotArray.append(returnSpot)
             }
-            // 立てられつピンの情報を保存
+            // 立てられるピンの情報を保存
             self.previousDatas = spotArray
             return spotArray
         }
@@ -171,21 +116,29 @@ class LocationViewModel: LocationViewModelProtocol {
 }
 
 
+protocol RealmViewModelProtocol {
+    func saveData(longitude: Double, latitude: Double, timestamp: Date) -> Single<Void>
+    
+    func getOneDayData(startValue: Int) -> Single<[LocationData]>
+    
+    func getOneDayData(startDate: Date) -> Single<[LocationData]>
+    
+    func organizeData(deleteTime: Int) -> Single<Void>
+    
+    func deleteData(locationData: LocationData) -> Single<Void>
+}
 class RealmViewModel: RealmViewModelProtocol {
-    let realmRepository: RealmRepositoryProtocol = RealmRepository()
+    private let realmRepository: RealmRepositoryProtocol = RealmRepository()
     
     func saveData(longitude: Double, latitude: Double, timestamp: Date) -> Single<Void> {
-        return Single<Void>.create { single -> Disposable in
-            // 引数の整形
-            let locationData = LocationData()
-            locationData.longitude = longitude
-            locationData.latitude = latitude
-            locationData.timestamp = timestamp
-            
-            // realmに保存する
-            self.realmRepository.saveData(locationData: locationData)
-            return Disposables.create()
-        }
+        // 引数の整形
+        let locationData = LocationData()
+        locationData.longitude = longitude
+        locationData.latitude = latitude
+        locationData.timestamp = timestamp
+        
+        // realmに保存する
+        return self.realmRepository.saveData(locationData: locationData)
     }
     
     func getOneDayData(startValue: Int) -> Single<[LocationData]> {
@@ -204,19 +157,39 @@ class RealmViewModel: RealmViewModelProtocol {
         return realmRepository.getOneDayData(startDate: startDate, endDate: endDate)
     }
     
+    
+    func organizeData(deleteTime: Int) -> Single<Void> {
+        var allLocationData: [LocationData]!
+        
+        self.realmRepository.getAllData().subscribe(
+            onSuccess: { result in
+                allLocationData = result
+            }, onError: { error in
+                fatalError("想定外のエラーです")
+            })
+            .dispose()
+        
+        return self.realmRepository.organizeData(allLocationData: allLocationData, deleteTime: deleteTime)
+    }
+    /*
     func organizeData(deleteTime: Int) -> Single<Void> {
         return Single<Void>.create { single -> Disposable in
             self.realmRepository.getAllData().subscribe(
                 onSuccess: { result in
                     let allLocationData = result
-                    self.realmRepository.organizeData(allLocationData: allLocationData, deleteTime: deleteTime)
+                    self.realmRepository.organizeData(allLocationData: allLocationData, deleteTime: deleteTime).subscribe(
+                        onSuccess: {_ in },
+                        onError: {_ in })
+                        .dispose()
+                    
                 }, onError: { error in
                     fatalError("想定外のエラーです")
                 })
                 .dispose()
             return Disposables.create()
         }
-    }
+    }*/
+    
     
     // データ削除
     func deleteData(locationData: LocationData) -> Single<Void> {
@@ -225,6 +198,11 @@ class RealmViewModel: RealmViewModelProtocol {
 }
 
 
+protocol CalendarViewModelProtocol {
+    func judgeHoliday(_ date : Date) -> Bool
+    
+    func getWeekId(_ date: Date) -> Int
+}
 class CalendarViewModel: CalendarViewModelProtocol {
     let calendarRepository: CalendarRepositoryProtocol = CalendarRepository()
     
@@ -242,26 +220,21 @@ class CalendarViewModel: CalendarViewModelProtocol {
 }
 
 
-// アラートのModel
+protocol AlertViewModelProtocol {
+    func showAlert(message: String) -> UIAlertController
+    
+    func goToSettings(message: String) -> UIAlertController
+}
 class AlertViewModel: AlertViewModelProtocol {
-    //通常バージョン
+    // 通常バージョン
     func showAlert(message: String) -> UIAlertController {
         let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
         let close = UIAlertAction(title: "閉じる", style: .cancel, handler: nil)
         alert.addAction(close)
         return alert
     }
-    func showAlert(message: String, closure: @escaping (_ string: String) -> Void) -> UIAlertController {
-        let alert = UIAlertController(title: "", message: message, preferredStyle: .alert)
-        //let close = UIAlertAction(title: "閉じる", style: .cancel, handler: closure(string))
-        let close = UIAlertAction(title: "閉じる", style: .cancel) { UIAlertAction in
-            closure("")
-        }
-        alert.addAction(close)
-        return alert
-    }
     
-    //アクセス許可が降りていない時に設定画面へ飛ぶ処理
+    // アクセス許可が降りていない時に設定画面へ飛ぶ処理
     func goToSettings(message: String) -> UIAlertController {
         let alert = UIAlertController(title: "", message: message, preferredStyle: UIAlertController.Style.alert)
         let close = UIAlertAction(title: "閉じる", style: .cancel, handler: nil)
@@ -276,6 +249,11 @@ class AlertViewModel: AlertViewModelProtocol {
 }
 
 
+protocol NotificationViewModelProtocol {
+    func askNotificationPermission()
+    
+    func notification(body: String, timeInterval: Double, title: String)
+}
 class NotificationViewModel: NotificationViewModelProtocol {
     private let center = UNUserNotificationCenter.current()
     
@@ -311,25 +289,43 @@ class NotificationViewModel: NotificationViewModelProtocol {
     }
 }
 
+
+protocol TimeViewModelProtocol {
+    func dateToString(date: Date) -> String
+    
+    func stringToDate(stringDate: String) -> Date
+    
+    func difference(startDate: Date, endDate: Date) -> Int
+    
+    func getStartOfDayCustomizedValue(value: Int) -> Date
+    
+    func getStartOfDay(selectDay: Date) -> Date
+    
+    func specificedDate(value: Int, selectDay: Date) -> Date
+    
+    func timeConversion(secondTime: Int) -> String
+    
+    func secondConversion(hour: Int, minute: Int, second: Int) -> Int
+}
 class TimeViewModel: TimeViewModelProtocol {
-    var dateFormatter = DateFormatter()
+    let dateFormatter = DateFormatter()
     let calendar = Calendar.current
     
-    //DateからStringに型変換
+    // DateからStringに型変換
     func dateToString(date: Date) -> String {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
         dateFormatter.timeZone = TimeZone.current
         return dateFormatter.string(from: date)
     }
     
-    //StringからDateに型変換
+    // StringからDateに型変換
     func stringToDate(stringDate: String) -> Date {
         dateFormatter.dateFormat  = "yyyy-MM-dd HH:mm:ss Z"
         let date = dateFormatter.date(from: stringDate)!
         return date
     }
     
-    //Dateの引き算を行う
+    // Dateの引き算を行う
     func difference(startDate: Date, endDate: Date) -> Int {
         let stayTime = endDate.timeIntervalSince(startDate)
         let time = Int(stayTime)
@@ -353,7 +349,7 @@ class TimeViewModel: TimeViewModelProtocol {
         return date
     }
     
-    //秒を時間に変換
+    // 秒を時間に変換
     func timeConversion(secondTime: Int) -> String {
         let day = secondTime / 60 / 60 / 24
         let hour = (secondTime - (60 * 60 * 24 * day)) / 60 / 60
@@ -363,7 +359,7 @@ class TimeViewModel: TimeViewModelProtocol {
         return time
     }
     
-    //時間を秒に変換
+    // 時間を秒に変換
     func secondConversion(hour: Int, minute: Int, second: Int) -> Int {
         let time = (hour * 3600) + (minute * 60) + second
         return time

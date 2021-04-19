@@ -8,6 +8,7 @@
 
 import XCTest
 import MapKit
+import RxSwift
 
 @testable import Record_the_Road
 
@@ -31,9 +32,9 @@ class TestLocationData {
 
 //class Record_the_RoadTests: XCTestCase {
 class LocationRepositoryTests: XCTestCase {
-    
     // locationRepositoryのテスト
     let locationRepository: LocationRepositoryProtocol = LocationRepository()
+    
     func testRemovePinsのテスト() {
         let coordinate = CLLocationCoordinate2D(latitude: 35.676226, longitude: 139.699385)
         let title = "2020-12-20-12:53:32 +0000"
@@ -52,31 +53,36 @@ class LocationRepositoryTests: XCTestCase {
             }, onError: { error in
                 XCTFail()
             })
+            .dispose()
     }
     
     func testAddPinsのテスト() {
-        typealias spotData = (coordinate: CLLocationCoordinate2D,title:  Date,subtitle: Int)
-        
-        // テスト情報の作成
-        var locationDatas: [LocationData] {
-            let date = Date()
-            
-            let locationData1 = LocationData()
-            locationData1.latitude = 35.676226
-            locationData1.longitude = 139.699385
-            locationData1.timestamp = date
-            
-            let locationData2 = LocationData()
-            locationData2.latitude = 35.5
-            locationData2.longitude = 139
-            locationData2.timestamp = date
-            
-            let datas = [locationData1, locationData2]
-            return datas
-        }
+        let testLocationDatas = TestLocationData.testDatas
         
         // 地図に立てるピンの情報を取得
-        locationRepository.getPinDatas(locationDatas: locationDatas)
+        locationRepository.getPinDatas(locationDatas: testLocationDatas).subscribe(
+            onSuccess: { pinDatas in
+                var count = 0
+                for pinData in pinDatas {
+                    let coordinate = pinData.coordinate
+                    let timestamp = pinData.title
+                    
+                    
+                    let testLatitude = testLocationDatas[count].latitude
+                    let testLongitude = testLocationDatas[count].longitude
+                    let testTimestamp = testLocationDatas[count].timestamp
+                    
+                    // 比較
+                    XCTAssertEqual(coordinate.latitude, testLatitude)
+                    XCTAssertEqual(coordinate.longitude, testLongitude)
+                    XCTAssertEqual(timestamp, testTimestamp)
+                    
+                    count += 1
+                }
+            }, onError: { error in
+                XCTFail("\(error)")
+            })
+            .dispose()
     }
     
     func testGetAuthorizationStatusのテスト() {
@@ -95,7 +101,7 @@ class LocationRepositoryTests: XCTestCase {
 
 class RealmRepositoryTests: XCTestCase {
     let realmRepository: RealmRepositoryProtocol = RealmRepository()
-    
+    let disposeBag = DisposeBag()
     // テストデータ
     let testDatas = TestLocationData.testDatas
     
@@ -114,84 +120,91 @@ class RealmRepositoryTests: XCTestCase {
             }, onError: { error in
                 XCTFail()
             })
-            .dispose()
+            .disposed(by: disposeBag)
     }
     
     func testGetOneDayDataのテスト() {
-        /*// テストデータ追加
+        // テストデータの追加
         for testData in testDatas {
-            realmRepository.saveData(locationData: testData)
-        }*/
+            realmRepository.saveData(locationData: testData).subscribe().disposed(by: disposeBag)
+        }
         
         // 一日分のデータを取得するためのDateを作成
-        let startDate = Date(timeIntervalSinceNow: -86400) // 昨日の現在時刻取得
-        let endDate = Date() // 現在時刻取得
+        let yesterday = Date(timeIntervalSinceNow: -86400)
+        let today = Date()
         
         // 一日分のデータ取得
         let expectation = self.expectation(description: "testGetOneDayDataのテスト.getOneDayData")
-        realmRepository.getOneDayData(startDate: startDate, endDate: endDate).subscribe(
+        
+        realmRepository.getOneDayData(startDate: yesterday, endDate: today).subscribe(
             onSuccess: { oneDayData in
-                if oneDayData.count < 2 {
+                // 最初のデータが存在するか確認、時刻を取得
+                guard let firstDate = oneDayData.first?.timestamp else {
                     XCTFail("テストデータの作成にミスがあります")
+                    return
                 }
-                // 最初のデータがstartDateよりも後の時刻か調べる
-                let firstDate = oneDayData.first!.timestamp
-                XCTAssertLessThan(startDate, firstDate, "firstDateがstartDateよりも後の時刻か調べる")
+                XCTAssertLessThan(yesterday, firstDate)
                 
                 // 最後のデータがendDateよりも前の時刻か調べる
-                let lastDate = oneDayData.last!.timestamp
-                XCTAssertGreaterThan(endDate, lastDate, "lastDateがendDateよりも前の時刻か調べる")
+                guard let lastDate = oneDayData.last?.timestamp else {
+                    XCTFail("テストデータの作成にミスがあります")
+                    return
+                }
+                XCTAssertGreaterThan(today, lastDate)
                 
                 // 非同期処理
                 expectation.fulfill()
                 
             }, onError: { error in
-                XCTFail()
+                XCTFail("\(error)")
             })
+            .disposed(by: disposeBag)
         wait(for: [expectation], timeout: 10)
         
-        /*// テストデータ削除
-        let deleteExpectation = self.expectation(description: "testGetOneDayDataのテスト.getOneDayData(delete)")
-        realmRepository.getOneDayData(startDate: startDate, endDate: endDate).subscribe(
-            onSuccess: { results in
-                for result in results {
-                    // 緯度、経度が150以外はcontinue
-                    guard result.latitude == 150, result.longitude == 150 else {
-                        continue
-                    }
-                    self.realmRepository.deleteData(locationData: result).subscribe(onSuccess: {_ in}, onError: {_ in })
-                    deleteExpectation.fulfill()
-                }
-            }, onError: { error in
-                XCTFail()
-            })
-        waitForExpectations(timeout: 20, handler: nil)
-        //wait(for: [deleteExpectation], timeout: 30)*/
     }
     
     func testDeleteDataのテスト() {
+        // テストデータ追加
+        for testData in testDatas {
+            realmRepository.saveData(locationData: testData).subscribe().disposed(by: disposeBag)
+        }
+        
         // テストデータの削除
         let expectation = self.expectation(description: "testDeleteDataのテスト.getAllData")
+        var allData: [LocationData]?
+        
         realmRepository.getAllData().subscribe(
-            onSuccess: { allData in
-                for data in allData {
-                    // テストデータ以外はcontinue
-                    guard data.latitude == 150, data.longitude == 150 else {
-                        continue
-                    }
-                    self.realmRepository.deleteData(locationData: data).subscribe(
-                        onSuccess: { result in
-                            XCTFail()
-                        }, onError: { error in
-                            XCTFail()
-                        })
+            onSuccess: { result in
+                let data: [LocationData] = result
+                allData = data
+                
+                // allDataが0だったらエラーを起こす
+                guard allData?.count != 0 else {
+                    XCTFail()
+                    return
                 }
                 expectation.fulfill()
             }, onError: { error in
                 XCTFail()
             })
-            .dispose()
+            .disposed(by: disposeBag)
         wait(for: [expectation], timeout: 20)
+        
+        for data in allData! {
+            // テストデータ以外はcontinue
+            guard data.latitude == 150, data.longitude == 150 else {
+                continue
+            }
+            
+            // テストデータ削除
+            self.realmRepository.deleteData(locationData: data).subscribe(
+                onSuccess: { result in
+                    print("成功")
+                }, onError: { error in
+                    XCTFail()
+                })
+                .disposed(by: disposeBag)
+        }
     }
 }
 

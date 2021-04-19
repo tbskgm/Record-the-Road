@@ -5,13 +5,13 @@
 //  Created by 小駒翼 on 2020/08/19.
 //  Copyright © 2020 Tsubasa Kogoma. All rights reserved.
 //
+
 import MapKit
 import RealmSwift
 import FSCalendar
 import CalculateCalendarLogic
 import KeychainAccess
 import RxSwift
-import RxCocoa
 
 
 protocol LocationRepositoryProtocol {
@@ -23,30 +23,6 @@ protocol LocationRepositoryProtocol {
     
     func getAuthorizationStatus(status: CLAuthorizationStatus) -> Single<CLAuthorizationStatus>
 }
-
-protocol RealmRepositoryProtocol {
-    func saveData(locationData: LocationData) -> Single<Void>
-    
-    func getAllData() -> Single<[LocationData]>
-    
-    func getOneDayData(startDate: Date, endDate: Date) -> Single<[LocationData]>
-    
-    func organizeData(allLocationData: [LocationData], deleteTime: Int)  -> Single<Void>
-    
-    func deleteData(locationData: LocationData) -> Single<Void>
-}
-
-protocol CalendarRepositoryProtocol {
-    func judgeHoliday(_ date : Date) -> Bool
-    
-    typealias yearMonthDay = (year: Int,month: Int,day: Int)
-    
-    //func getDay(_ date:Date) -> yearMonthDay
-    
-    func getWeekId(_ date: Date) -> Int
-}
-
-
 class LocationRepository: LocationRepositoryProtocol {
     //ピンの削除
     func removePins(previousDatas: [Spot]) -> Single<[Spot]> {
@@ -57,7 +33,7 @@ class LocationRepository: LocationRepositoryProtocol {
     }
     
     //ピンを立てる
-    typealias spotData = (coordinate: CLLocationCoordinate2D,title:  Date,subtitle: Int)
+    typealias spotData = (coordinate: CLLocationCoordinate2D, title:  Date, subtitle: Int)
     
     func getPinDatas(locationDatas: [LocationData]) -> Single<[spotData]> {
         return Single<[spotData]>.create { single -> Disposable in
@@ -90,7 +66,6 @@ class LocationRepository: LocationRepositoryProtocol {
                 let subtitle = stayTime
                 let spot = (coordinate: coordinate, title: title, subtitle: subtitle)
                 spots.append(spot)
-                
             }
             single(.success(spots))
             return Disposables.create()
@@ -117,11 +92,20 @@ class LocationRepository: LocationRepositoryProtocol {
             return Disposables.create()
         }
     }
-    
-    
 }
 
 
+protocol RealmRepositoryProtocol {
+    func saveData(locationData: LocationData) -> Single<Void>
+    
+    func getAllData() -> Single<[LocationData]>
+    
+    func getOneDayData(startDate: Date, endDate: Date) -> Single<[LocationData]>
+    
+    func organizeData(allLocationData: [LocationData], deleteTime: Int)  -> Single<Void>
+    
+    func deleteData(locationData: LocationData) -> Single<Void>
+}
 class RealmRepository: RealmRepositoryProtocol {
     private var config: Realm.Configuration {
         let config = Realm.Configuration(
@@ -196,6 +180,7 @@ class RealmRepository: RealmRepositoryProtocol {
             let realm = try! Realm(configuration: self.config)
             let realmLocationDatas = realm.objects(LocationData.self).filter("timestamp >= %@ AND timestamp < %@", startDate, endDate) // 1日分の情報を取得
             let locationDatas = Array(realmLocationDatas)
+            
             single(.success(locationDatas))
             return Disposables.create()
         }
@@ -205,8 +190,10 @@ class RealmRepository: RealmRepositoryProtocol {
     func getAllData() -> Single<[LocationData]> {
         return Single<[LocationData]>.create { single -> Disposable in
             let realm = try! Realm(configuration: self.config)
+            
             let realmAllLocationData = realm.objects(LocationData.self)
             let allLocationData = Array(realmAllLocationData)
+            
             single(.success(allLocationData))
             return Disposables.create()
         }
@@ -220,11 +207,9 @@ class RealmRepository: RealmRepositoryProtocol {
             let allLocationDataCount = allLocationData.count
             var count = 0
             var deleteCount = 0
-            print("allLocationDataCount: \(allLocationDataCount)")
             // Realmに保存されている全データから滞在時間が指定時間以下の情報を削除する
             exit: for locationData in allLocationData {
                 guard (allLocationDataCount - 1) > count else {
-                    print("exit")
                     break exit
                 }
                 count += 1
@@ -235,7 +220,6 @@ class RealmRepository: RealmRepositoryProtocol {
                 
                 let stayTime = Int(departureDate.timeIntervalSince(arrivalDate)) // 滞在時間の取
                 guard stayTime < deleteTime else {
-                    print("continue: \(stayTime)")
                     continue
                 }
                 
@@ -245,7 +229,6 @@ class RealmRepository: RealmRepositoryProtocol {
                     realm.delete(locationData)
                 }
                 deleteCount += 1
-                print("deleteCount: \(deleteCount)")
             }
             return Disposables.create()
         }
@@ -260,7 +243,6 @@ class RealmRepository: RealmRepositoryProtocol {
                     realm.delete(locationData)
                 }
             } catch {
-                print("error: \(error.localizedDescription)")
                 single(.error(error))
             }
             return Disposables.create()
@@ -271,6 +253,15 @@ class RealmRepository: RealmRepositoryProtocol {
 }
 
 
+protocol CalendarRepositoryProtocol {
+    func judgeHoliday(_ date : Date) -> Bool
+    
+    typealias yearMonthDay = (year: Int,month: Int,day: Int)
+    
+    //func getDay(_ date:Date) -> yearMonthDay
+    
+    func getWeekId(_ date: Date) -> Int
+}
 class CalendarRepository: CalendarRepositoryProtocol {
     private let calendar = Calendar(identifier: .gregorian)
     private var dateFormatter: DateFormatter {
